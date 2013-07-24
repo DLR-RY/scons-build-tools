@@ -52,7 +52,6 @@ def generate(env, **kw):
 		'-Winit-self',
 		'-Wcast-qual',
 		'-Wcast-align',
-		'-Wimplicit',
 #		'-Wshadow',
 		'-Wpointer-arith',
 		'-Wwrite-strings',
