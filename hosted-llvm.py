@@ -24,15 +24,15 @@ def generate(env, **kw):
 	
 	# used programs
 	prefix = env.get('COMPILERPATH', '')
-	env['CC'] =      prefix + 'gcc'
-	env['CXX'] =     prefix + 'g++'
-	env['AS'] =      prefix + 'as'
-	env['OBJCOPY'] = prefix + 'objcopy'
-	env['OBJDUMP'] = prefix + 'objdump'
-	env['AR'] =      prefix + 'ar'
-	env['NM'] =      prefix + 'nm'
-	env['RANLIB'] =  prefix + 'ranlib'
-	env['SIZE'] =    prefix + 'size'
+	env['CC'] =      prefix + 'clang'
+	env['CXX'] =     prefix + 'clang++'
+	env['AS'] =      prefix + 'llvm-as'
+	env['OBJCOPY'] = prefix + 'objcopy'			# not available
+	env['OBJDUMP'] = prefix + 'llvm-objdump'
+	env['AR'] =      prefix + 'llvm-ar'
+	env['NM'] =      prefix + 'nm'				# not available
+	env['RANLIB'] =  prefix + 'ranlib'			# not available
+	env['SIZE'] =    prefix + 'llvm-size'
 	
 	# flags for C and C++
 	env['CCFLAGS'] = [
@@ -70,7 +70,6 @@ def generate(env, **kw):
 	# C++ flags
 	env['CXXFLAGS'] = [
 		'$CXXFLAGS_std',
-		'-fno-rtti',
 		'$CXXFLAGS_warning',
 	]
 	
