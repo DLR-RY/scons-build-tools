@@ -46,8 +46,10 @@ def generate(env, **kw):
 		env['RANLIBCOMSTR'] =	'%sIndexing:       %s$TARGET%s' % library
 		env['ARCOMSTR'] =		'%sCreate Library: %s$TARGET%s' % library
 		
-		# TODO due to an inconsitency in SCons these dots are neccessary
-		#      to keep the indentation. Spaces would be removed.
+		# Warning: Due to an inconsitency in SCons these ASCII art arrow is
+		#      neccessary to keep the indentation. Spaces would be removed.
+		# 
+		# See also:
 		# http://scons.tigris.org/ds/viewMessage.do?dsForumId=1268&dsMessageId=2425232
 		env['INSTALLSTR'] =     "%s .---Install--- %s$SOURCE\n" \
 		                        "%s '------------> %s$TARGET%s" % install
