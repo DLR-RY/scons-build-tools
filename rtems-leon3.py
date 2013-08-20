@@ -39,8 +39,7 @@ def generate(env, **kw):
 	env['CCFLAGS'] = [
 		'-O2',
 		'-g',
-		'-msoft-float',
-		'-mcpu=v8',
+		'-mcpu=v8', '-msoft-float',
 		'$CCFLAGS_warning',
 	]
 	
@@ -50,7 +49,7 @@ def generate(env, **kw):
 		'-Wall',
 		'-Wextra',
 		'-Wformat',
-		'-Wno-unused-parameter',
+		'-Wunused-parameter',
 		'-Wundef',
 		'-Winit-self',
 		'-Wcast-qual',

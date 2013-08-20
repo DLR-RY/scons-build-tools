@@ -47,7 +47,7 @@ def generate(env, **kw):
 		'-Wall',
 		'-Wextra',
 		'-Wformat',
-		'-Wno-unused-parameter',
+		'-Wunused-parameter',
 		'-Wundef',
 		'-Winit-self',
 		'-Wcast-qual',

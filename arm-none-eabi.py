@@ -17,7 +17,7 @@ def generate(env, **kw):
 	env.Tool('ar')
 	env.Tool('as')
 
-	env['PROGSUFFIX'] = ''
+	env['PROGSUFFIX'] = '.elf'
 	
 	env['ARCHITECTURE'] = 'arm'
 	env.SetDefault(OS='none')
@@ -37,20 +37,27 @@ def generate(env, **kw):
 	
 	# flags for C and C++
 	env['CCFLAGS'] = [
-		'-O2',
-		'-g',
-		'-mcpu=arm7tdmi',
+		'$CCFLAGS_target',
+		'$CCFLAGS_optimize',
+		'$CCFLAGS_debug',
 		'-ffunction-sections',
+		'-fdata-sections',
 		'$CCFLAGS_warning',
+		'$CCFLAGS_other'
 	]
 	
+	env['CCFLAGS_target'] = ['-mcpu=arm7tdmi']
+	env['CCFLAGS_optimize'] = ['-O2']
+	env['CCFLAGS_debug'] = ['-g']
 	env['CCFLAGS_warning'] = '$CCFLAGS_warning_default'
+	env['CCFLAGS_other'] = []
+	
 	env['CCFLAGS_warning_default'] = [
 		'-W',
 		'-Wall',
 		'-Wextra',
 		'-Wformat',
-		'-Wno-unused-parameter',
+		'-Wunused-parameter',
 		'-Wundef',
 		'-Winit-self',
 		'-Wcast-qual',
@@ -64,24 +71,33 @@ def generate(env, **kw):
 		'-Winline',
 		'-Wuninitialized',
 #		'-Wconversion',
+		'-Wdouble-promotion',
 	]
 	
 	# C flags
 	env['CFLAGS'] = [
-		'-std=gnu99',
+		'$CFLAGS_language'
+		
+	]
+	
+	env['CFLAGS_language'] = ['-std=gnu99']
+	env['CFLAGS_warning'] = [
 		'-Wimplicit',
+		'-Wstrict-prototypes',
+		'-Wredundant-decls',
+		'-Wnested-externs',
 	]
 	
 	# C++ flags
 	env['CXXFLAGS'] = [
-		'$CXXFLAGS_std',
+		'$CXXFLAGS_language',
 		'-fno-rtti',
 		'-fno-exceptions',
 		'$CXXFLAGS_warning',
+		'$CXXFLAGS_other',
 	]
 	
-	env['CXXFLAGS_std'] = '$CXXFLAGS_std_default'
-	env['CXXFLAGS_std_default'] = [
+	env['CXXFLAGS_language'] = [
 		'-std=c++98',
 		'-pedantic',
 	]
