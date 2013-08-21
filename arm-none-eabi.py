@@ -40,19 +40,14 @@ def generate(env, **kw):
 		'$CCFLAGS_target',
 		'$CCFLAGS_optimize',
 		'$CCFLAGS_debug',
-		'-ffunction-sections',
-		'-fdata-sections',
 		'$CCFLAGS_warning',
 		'$CCFLAGS_other'
 	]
 	
 	env['CCFLAGS_target'] = ['-mcpu=arm7tdmi']
-	env['CCFLAGS_optimize'] = ['-O2']
+	env['CCFLAGS_optimize'] = ['-O2', '-ffunction-sections', '-fdata-sections',]
 	env['CCFLAGS_debug'] = ['-g']
-	env['CCFLAGS_warning'] = '$CCFLAGS_warning_default'
-	env['CCFLAGS_other'] = []
-	
-	env['CCFLAGS_warning_default'] = [
+	env['CCFLAGS_warning'] = [
 		'-W',
 		'-Wall',
 		'-Wextra',
@@ -62,7 +57,6 @@ def generate(env, **kw):
 		'-Winit-self',
 		'-Wcast-qual',
 		'-Wcast-align',
-#		'-Wshadow',
 		'-Wpointer-arith',
 		'-Wwrite-strings',
 		'-Wmissing-declarations',
@@ -70,14 +64,16 @@ def generate(env, **kw):
 		'-Wunused',
 		'-Winline',
 		'-Wuninitialized',
-#		'-Wconversion',
 		'-Wdouble-promotion',
+#		'-Wshadow',
+#		'-Wconversion',
 	]
+	env['CCFLAGS_other'] = []
 	
 	# C flags
 	env['CFLAGS'] = [
-		'$CFLAGS_language'
-		
+		'$CFLAGS_language',
+		'$CFLAGS_warning',
 	]
 	
 	env['CFLAGS_language'] = ['-std=gnu99']
@@ -91,8 +87,6 @@ def generate(env, **kw):
 	# C++ flags
 	env['CXXFLAGS'] = [
 		'$CXXFLAGS_language',
-		'-fno-rtti',
-		'-fno-exceptions',
 		'$CXXFLAGS_warning',
 		'$CXXFLAGS_other',
 	]
@@ -100,10 +94,11 @@ def generate(env, **kw):
 	env['CXXFLAGS_language'] = [
 		'-std=c++98',
 		'-pedantic',
+		'-fno-rtti',
+		'-fno-exceptions',
 	]
 	
-	env['CXXFLAGS_warning'] = '$CXXFLAGS_warning_default'
-	env['CXXFLAGS_warning_default'] = [
+	env['CXXFLAGS_warning'] = [
 		'-Wold-style-cast',
 		'-Woverloaded-virtual',
 		'-Wnon-virtual-dtor',
