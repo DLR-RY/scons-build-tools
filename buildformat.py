@@ -39,6 +39,7 @@ def generate(env, **kw):
 		'purple':		'\033[;0;35m',
 		'blue':			'\033[;0;34m',
 		'green':		'\033[;0;32m',
+		'boldgreen':	'\033[;1;32m',
 		'lightgreen':	'\033[;0;92m',
 		'yellow':		'\033[;0;33m',
 		'boldyellow':	'\033[;1;33m',
@@ -54,9 +55,9 @@ def generate(env, **kw):
 			colors[key] = ''
 	
 	default = (colors['green'], colors['yellow'], colors['end'])
-	library = (colors['boldred'], colors['yellow'], colors['end'])
-	linking = (colors['boldred'], colors['boldyellow'], colors['end'])
-	install = (colors['red'], colors['yellow'], colors['red'], colors['boldyellow'], colors['end'])
+	library = (colors['boldgreen'], colors['yellow'], colors['end'])
+	linking = (colors['boldgreen'], colors['boldyellow'], colors['end'])
+	install = (colors['green'], colors['yellow'], colors['green'], colors['boldyellow'], colors['end'])
 	
 	# build messages
 	if ARGUMENTS.get('verbose') != '1':
