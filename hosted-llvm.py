@@ -58,13 +58,17 @@ def generate(env, **kw):
 	
 	# flags for C and C++
 	env['CCFLAGS'] = [
-		'-O2',
-		'-g',
+		'$CCFLAGS_target',
+		'$CCFLAGS_optimize',
+		'$CCFLAGS_debug',
 		'$CCFLAGS_warning',
+		'$CCFLAGS_other'
 	]
 	
-	env['CCFLAGS_warning'] = '$CCFLAGS_warning_default'
-	env['CCFLAGS_warning_default'] = [
+	env['CCFLAGS_target'] = []
+	env['CCFLAGS_optimize'] = ['-O2']
+	env['CCFLAGS_debug'] = ['-g']
+	env['CCFLAGS_warning'] = [
 		'-W',
 		'-Wall',
 		'-Wextra',
@@ -74,7 +78,6 @@ def generate(env, **kw):
 		'-Winit-self',
 		'-Wcast-qual',
 		'-Wcast-align',
-#		'-Wshadow',
 		'-Wpointer-arith',
 		'-Wwrite-strings',
 		'-Wmissing-declarations',
@@ -82,30 +85,49 @@ def generate(env, **kw):
 		'-Wunused',
 		'-Winline',
 		'-Wuninitialized',
+		'-Wdouble-promotion',
+#		'-Wshadow',
 #		'-Wconversion',
 	]
+	env['CCFLAGS_other'] = []
 	
 	# C flags
 	env['CFLAGS'] = [
+		'$CFLAGS_language',
+		'$CFLAGS_warning',
+	]
+	
+	env['CFLAGS_language'] = [
+		'-std=c99',
+		'-pedantic',
+	]
+	env['CFLAGS_warning'] = [
+		'-Wimplicit',
+		'-Wstrict-prototypes',
+		'-Wredundant-decls',
+		'-Wnested-externs',
 	]
 	
 	# C++ flags
 	env['CXXFLAGS'] = [
-		'$CXXFLAGS_std',
+		'$CXXFLAGS_language',
 		'$CXXFLAGS_warning',
+		'$CXXFLAGS_other',
 	]
 	
-	env['CXXFLAGS_std'] = '$CXXFLAGS_std_default'
-	env['CXXFLAGS_std_default'] = [
+	env['CXXFLAGS_language'] = [
 		'-std=c++98',
 		'-pedantic',
 	]
 	
-	env['CXXFLAGS_warning'] = '$CXXFLAGS_warning_default'
-	env['CXXFLAGS_warning_default'] = [
+	env['CXXFLAGS_warning'] = [
 		'-Wold-style-cast',
 		'-Woverloaded-virtual',
 		'-Wnon-virtual-dtor',
+	]
+	
+	env['LINKFLAGS'] = [
+		'$CCFLAGS',
 	]
 
 # -----------------------------------------------------------------------------	

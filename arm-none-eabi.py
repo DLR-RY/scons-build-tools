@@ -98,7 +98,10 @@ def generate(env, **kw):
 		'$CFLAGS_warning',
 	]
 	
-	env['CFLAGS_language'] = ['-std=gnu99']
+	env['CFLAGS_language'] = [
+		'-std=c99',
+		'-pedantic',
+	]
 	env['CFLAGS_warning'] = [
 		'-Wimplicit',
 		'-Wstrict-prototypes',
@@ -129,7 +132,7 @@ def generate(env, **kw):
 	env['LINKFLAGS'] = [
 		'$CCFLAGS',
 		'-Xlinker',
-		'--gc-sections'
+		'--gc-sections',
 	]
 
 # -----------------------------------------------------------------------------	

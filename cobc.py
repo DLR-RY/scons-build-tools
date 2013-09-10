@@ -28,6 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import os.path
+
 from SCons.Script import *
 
 def listify(node):
@@ -51,9 +53,13 @@ def remove_from_list(env, identifier, to_remove):
 			l.remove(r)
 	env[identifier] = l
 
+def filtered_glob(env, pattern, omit=[], ondisk=True, source=False, strings=False):
+	return filter(lambda f: os.path.basename(f.path) not in omit, env.Glob(pattern))
+
 # -----------------------------------------------------------------------------
 def generate(env, **kw):
 	env.AddMethod(remove_from_list, 'RemoveFromList')
+	env.AddMethod(filtered_glob, 'FilteredGlob')
 
 # -----------------------------------------------------------------------------	
 def exists(env):
