@@ -1,4 +1,4 @@
-#!#!/usr/bin/env python
+#!/usr/bin/env python
 #
 # Copyright (c) 2013, German Aerospace Center (DLR)
 # All Rights Reserved.
@@ -47,7 +47,7 @@ def generate(env, **kw):
 	# used programs
 	prefix = env.get('COMPILERPATH', '')
 	suffix = env.get('COMPILERVERSION', '')
-	if not suffix.startswith('-'):
+	if suffix != '' and not suffix.startswith('-'):
 		suffix = '-' + suffix
 	
 	env['CC'] =      prefix + 'gcc' + suffix
