@@ -28,6 +28,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import commands
+
 from SCons.Script import *
 
 # -----------------------------------------------------------------------------
@@ -56,6 +58,10 @@ def generate(env, **kw):
 	env['NM'] =      prefix + 'nm'
 	env['RANLIB'] =  prefix + 'ranlib'
 	env['SIZE'] =    prefix + 'size'
+	
+	v = commands.getoutput(env['CXX'] + ' -dumpversion')	# v = 4.6.1
+	v = [int(x) for x in v.split('.')]						# v = [4, 6, 1]
+	compiler_version = v[0] * 10000 + v[1] * 100 + v[2]		# v = 40601
 	
 	# flags for C and C++
 	env['CCFLAGS'] = [
@@ -86,10 +92,14 @@ def generate(env, **kw):
 		'-Wunused',
 		'-Winline',
 		'-Wuninitialized',
-		'-Wdouble-promotion',
 #		'-Wshadow',
 #		'-Wconversion',
 	]
+	
+	# only after for gcc >= 4.6
+	if compiler_version >= 40600:
+		env['CCFLAGS_warning'].append('-Wdouble-promotion')
+	
 	env['CCFLAGS_other'] = []
 	
 	# C flags
