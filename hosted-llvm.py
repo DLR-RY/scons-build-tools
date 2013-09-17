@@ -85,7 +85,6 @@ def generate(env, **kw):
 		'-Wunused',
 		'-Winline',
 		'-Wuninitialized',
-		'-Wdouble-promotion',
 #		'-Wshadow',
 #		'-Wconversion',
 	]
