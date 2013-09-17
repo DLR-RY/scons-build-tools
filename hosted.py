@@ -89,7 +89,7 @@ def generate(env, **kw):
 		'-Wunused',
 		'-Winline',
 		'-Wuninitialized',
-		'-Wdouble-promotion',
+#		'-Wdouble-promotion',	# only for GCC 4.6 and later
 #		'-Wshadow',
 #		'-Wconversion',
 	]
