@@ -87,6 +87,8 @@ def generate(env, **kw):
 		'-Winline',
 		'-Wuninitialized',
 		'-Wdouble-promotion',
+		# allow 64-bit integer types even if they are not included in ISO C++98
+		'-Wno-long-long',
 #		'-Wshadow',
 #		'-Wconversion',
 	]
