@@ -69,6 +69,11 @@ def generate(env, **kw):
 		env['RANLIBCOMSTR'] =	'%sIndexing:       %s$TARGET%s' % library
 		env['ARCOMSTR'] =		'%sCreate Library: %s$TARGET%s' % library
 		
+		# for shared libraries
+		env['SHCCCOMSTR'] =		'%sCompiling C (shared):   %s$TARGET%s' % default
+		env['SHCXXCOMSTR'] =	'%sCompiling C++ (shared): %s$TARGET%s' % default
+		env['SHLINKCOMSTR'] =	'%sLinking (shared):       %s$TARGET%s' % linking
+		
 		# Warning: Due to an inconsitency in SCons these ASCII-art arrow is
 		#          neccessary to keep the indentation. Spaces would be removed.
 		# 
