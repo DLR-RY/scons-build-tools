@@ -28,6 +28,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import SCons
 
 # -----------------------------------------------------------------------------
 def relocate_to_buildpath(env, path, strip_extension=False):
@@ -51,10 +52,22 @@ def generate(env, **kw):
 	# separate build-directory.
 	def defaultEmitter(target, source, env):
 		targets = []
-		for file in target:
+		for infile in target:
 			# relocate the output to the buildpath
-			filename = env.Buildpath(file.path)
-			targets.append(filename)
+			filename = env.Buildpath(infile.path)
+			targets.append(env.File(filename))
+		return targets, source
+	
+	def sharedEmitter(target, source, env):
+		targets = []
+		for infile in target:
+			# relocate the output to the buildpath
+			filename = env.Buildpath(infile.path)
+			
+			outfile = env.File(filename)
+			outfile.attributes.shared = 1
+			
+			targets.append(outfile)
 		return targets, source
 
 	env['BUILDERS']['Object'].add_emitter('.cpp', defaultEmitter)
@@ -62,6 +75,10 @@ def generate(env, **kw):
 	env['BUILDERS']['Object'].add_emitter('.c', defaultEmitter)
 	env['BUILDERS']['Object'].add_emitter('.sx', defaultEmitter)
 	env['BUILDERS']['Object'].add_emitter('.S', defaultEmitter)
+	
+	env['BUILDERS']['SharedObject'].add_emitter('.cpp', sharedEmitter)
+	env['BUILDERS']['SharedObject'].add_emitter('.cc', sharedEmitter)
+	env['BUILDERS']['SharedObject'].add_emitter('.c', sharedEmitter)
 
 	env['LIBEMITTER'] = defaultEmitter
 	env['PROGEMITTER'] = defaultEmitter
