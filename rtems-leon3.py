@@ -100,8 +100,11 @@ def generate(env, **kw):
 	# only after for gcc >= 4.6
 	if compiler_version >= 40600:
 		env['CCFLAGS_warning'].append('-Wdouble-promotion')
-	
-	env['CCFLAGS_other'] = []
+
+	# Add following flag '-qleon3std' for using modified version of GRSPW & APBUART driver.
+	# This will compile the standard RTEMS library for manual driver manager registration
+	# Otherwise remove the '-qleon3std' flag for automatic driver registration
+	env['CCFLAGS_other'] = []	#['-qleon3std']
 	
 	# C flags
 	env['CFLAGS'] = [
