@@ -82,6 +82,8 @@ def generate(env, **kw):
 		env['INSTALLSTR'] =     "%s .---Install--- %s$SOURCE\n" \
 		                        "%s '------------> %s$TARGET%s" % install
 		
+		env['STRIPCOMSTR'] =	'%sStripping:      %s$TARGET%s' % linking
+		
 		env['SIZECOMSTR'] = 'Size after:'
 		env['HEXCOMSTR'] = 'Creating load file for Flash: $TARGET'
 		env['BINCOMSTR'] = 'Creating load file for Flash: $TARGET'

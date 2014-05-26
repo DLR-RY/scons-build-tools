@@ -68,6 +68,7 @@ def generate(env, **kw):
 	env['OBJCOPY'] = prefix + 'objcopy'
 	env['OBJDUMP'] = prefix + 'objdump'
 	env['SIZE'] =    prefix + 'size'
+	env['STRIP'] =   prefix + 'strip'
 	
 	env['LINK'] =    env['CXX']
 	
@@ -145,6 +146,14 @@ def generate(env, **kw):
 	env['LINKFLAGS'] = [
 		'$CCFLAGS',
 	]
+	
+	env.AddMethod(strip_binary, 'Strip')
+
+def strip_binary(env, target, source, options="--strip-debug"):
+	return env.Command(target,
+	                   source,
+                       Action("$STRIP %s -o %s %s" % (options, target, source[0]),
+                              cmdstr="$STRIPCOMSTR"))
 
 # -----------------------------------------------------------------------------	
 def exists(env):

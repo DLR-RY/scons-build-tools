@@ -55,6 +55,7 @@ def generate(env, **kw):
 	env['NM'] =      prefix + 'nm'				# not available
 	env['RANLIB'] =  prefix + 'ranlib'			# not available
 	env['SIZE'] =    prefix + 'llvm-size'
+	env['STRIP'] =   'strip'					# TODO no LLVM equivalent available
 	
 	# flags for C and C++
 	env['CCFLAGS'] = [
@@ -135,7 +136,15 @@ def generate(env, **kw):
 		env['CC'] =  'ccc-analyzer'
 		env['CXX'] = 'c++-analyzer'
 		env['CCFLAGS_optimize'] = ['-O0']
+	
+	env.AddMethod(strip_binary, 'Strip')
 
+def strip_binary(env, target, source, options="--strip-debug"):
+	return env.Command(target,
+	                   source,
+                       Action("$STRIP %s -o %s %s" % (options, target, source[0]),
+                              cmdstr="$STRIPCOMSTR"))
+	
 # -----------------------------------------------------------------------------	
 def exists(env):
 	return env.Detect('gcc')

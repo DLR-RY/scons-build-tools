@@ -58,6 +58,7 @@ def generate(env, **kw):
 	env['NM'] =      prefix + 'nm'
 	env['RANLIB'] =  prefix + 'ranlib'
 	env['SIZE'] =    prefix + 'size'
+	env['STRIP'] =   prefix + 'strip'
 	
 	v = commands.getoutput(env['CXX'] + ' -dumpversion')	# v = 4.6.1
 	v = [int(x) for x in v.split('.')]						# v = [4, 6, 1]
@@ -150,6 +151,14 @@ def generate(env, **kw):
 		'$CCFLAGS',
 		'--gc-sections',
 	]
+	
+	env.AddMethod(strip_binary, 'Strip')
+
+def strip_binary(env, target, source, options="--strip-debug"):
+	return env.Command(target,
+	                   source,
+                       Action("$STRIP %s -o %s %s" % (options, target, source[0]),
+                              cmdstr="$STRIPCOMSTR"))
 
 # -----------------------------------------------------------------------------	
 def exists(env):
