@@ -50,15 +50,26 @@ def generate(env, **kw):
 	if suffix != '' and not suffix.startswith('-'):
 		suffix = '-' + suffix
 	
-	env['CC'] =      prefix + 'gcc' + suffix
-	env['CXX'] =     prefix + 'g++' + suffix
-	env['AS'] =      prefix + 'as'
+	if suffix == '':
+		env['CC'] =      prefix + 'gcc' + suffix
+		env['CXX'] =     prefix + 'g++' + suffix
+		env['AS'] =      prefix + 'as'
+		env['AR'] =      prefix + 'ar'
+		env['NM'] =      prefix + 'nm'
+		env['RANLIB'] =  prefix + 'ranlib'
+	else:
+		env['CC'] =      prefix + 'gcc' + suffix
+		env['CXX'] =     prefix + 'g++' + suffix
+		env['AS'] =      prefix + 'gcc' + suffix
+		env['AR'] =      prefix + 'gcc-ar' + suffix
+		env['NM'] =      prefix + 'gcc-nm' + suffix
+		env['RANLIB'] =  prefix + 'gcc-ranlib' + suffix
+	
 	env['OBJCOPY'] = prefix + 'objcopy'
 	env['OBJDUMP'] = prefix + 'objdump'
-	env['AR'] =      prefix + 'ar'
-	env['NM'] =      prefix + 'nm'
-	env['RANLIB'] =  prefix + 'ranlib'
 	env['SIZE'] =    prefix + 'size'
+	
+	env['LINK'] =    env['CXX']
 	
 	# flags for C and C++
 	env['CCFLAGS'] = [

@@ -72,6 +72,9 @@ def generate(env, **kw):
 		'$CCFLAGS_other'
 	]
 	
+	# Without a '-q*' option, '-qleon3' is used (see Gaisler rcc-1.2.0
+	# documentation) although it is not recognized when added as an explizit
+	# parameter.
 	env['CCFLAGS_target'] = ['-mcpu=v8', '-msoft-float',]
 	env['CCFLAGS_optimize'] = ['-O2', '-ffunction-sections', '-fdata-sections',]
 	env['CCFLAGS_debug'] = ['-g']

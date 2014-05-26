@@ -129,6 +129,12 @@ def generate(env, **kw):
 	env['LINKFLAGS'] = [
 		'$CCFLAGS',
 	]
+	
+	# Uses the clang static analyzer, see http://clang-analyzer.llvm.org/
+	if ARGUMENTS.get('analyze') != None:
+		env['CC'] =  'ccc-analyzer'
+		env['CXX'] = 'c++-analyzer'
+		env['CCFLAGS_optimize'] = ['-O0']
 
 # -----------------------------------------------------------------------------	
 def exists(env):

@@ -29,39 +29,77 @@
 
 import os
 import os.path
+import commands
 
 from SCons.Script import *
 
+
 def listify(node):
-	return [node,] if (not isinstance(node, list) and \
-	                   not isinstance(node, SCons.Node.NodeList)) else node
+    return [node, ] if (not isinstance(node, list) and
+                        not isinstance(node, SCons.Node.NodeList)) else node
+
 
 def remove_from_list(env, identifier, to_remove):
-	""" Remove strings from a list.
-	
-	E.g.
-	env.RemoveFromList('$CXXFLAGS_warning', ['-Wold-style-cast'])
-	"""
-	if identifier.startswith('$'):
-		raise Exception("identifier '%s' must not start with '$'!" % identifier)
-	
-	l = env.subst('$' + identifier)
-	if isinstance(l, str):
-		l = l.split(' ')
-	for r in listify(to_remove):
-		if r in l:
-			l.remove(r)
-	env[identifier] = l
+    """ Remove strings from a list.
 
-def filtered_glob(env, pattern, omit=[], ondisk=True, source=False, strings=False):
-	return filter(lambda f: os.path.basename(f.path) not in omit, env.Glob(pattern))
+    E.g.
+    env.RemoveFromList('$CXXFLAGS_warning', ['-Wold-style-cast'])
+    """
+    if identifier.startswith('$'):
+        raise Exception("identifier '%s' must not start with '$'!" % identifier)
+
+    l = env.subst('$' + identifier)
+    if isinstance(l, str):
+        l = l.split(' ')
+    for r in listify(to_remove):
+        if r in l:
+            l.remove(r)
+    env[identifier] = l
+
+
+def filtered_glob(env, pattern, omit=None, ondisk=True, source=False, strings=False):
+    if omit is None:
+        omit = []
+
+    return filter(lambda f: os.path.basename(f.path) not in omit, env.Glob(pattern))
+
+
+def detect_gcc_version(env, gcc=None):
+    """"Detect the version of the used GCC.
+
+    Used env['CXX'] as reference. A version string such as 4.4.3 is transformed into an
+    integer with two characters per level, here: 40403.
+
+    Examples:
+      4.7    -> 40700
+      4.6.5  -> 40605
+      4.3.10 -> 40310
+    """""
+    if gcc is None:
+        gcc = env['CXX']
+    version_str = commands.getoutput(gcc + ' -dumpversion')
+
+    version = 0
+    offset = 1
+    figures = version_str.split('.')
+    while len(figures) < 3:
+        figures.append("0")
+
+    figures.reverse()
+    for figure in figures:
+        version += int(figure) * offset
+        offset *= 100
+
+    return version
+
 
 # -----------------------------------------------------------------------------
 def generate(env, **kw):
-	env.AddMethod(remove_from_list, 'RemoveFromList')
-	env.AddMethod(filtered_glob, 'FilteredGlob')
+    env.AddMethod(remove_from_list, 'RemoveFromList')
+    env.AddMethod(filtered_glob, 'FilteredGlob')
+    env.AddMethod(detect_gcc_version, 'DetectGccVersion')
 
-# -----------------------------------------------------------------------------	
+
+# -----------------------------------------------------------------------------
 def exists(env):
-	return True
-	
+    return True
