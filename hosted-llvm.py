@@ -57,6 +57,8 @@ def generate(env, **kw):
 	env['SIZE'] =    prefix + 'llvm-size'
 	env['STRIP'] =   'strip'					# TODO no LLVM equivalent available
 	
+	env['LINK'] = env['CXX']
+	
 	# flags for C and C++
 	env['CCFLAGS'] = [
 		'$CCFLAGS_target',
