@@ -50,16 +50,14 @@ def generate(env, **kw):
 	if suffix != '' and not suffix.startswith('-'):
 		suffix = '-' + suffix
 	
+	env['CC'] =      prefix + 'gcc' + suffix
+	env['CXX'] =     prefix + 'g++' + suffix
 	if suffix == '':
-		env['CC'] =      prefix + 'gcc' + suffix
-		env['CXX'] =     prefix + 'g++' + suffix
 		env['AS'] =      prefix + 'as'
 		env['AR'] =      prefix + 'ar'
 		env['NM'] =      prefix + 'nm'
 		env['RANLIB'] =  prefix + 'ranlib'
 	else:
-		env['CC'] =      prefix + 'gcc' + suffix
-		env['CXX'] =     prefix + 'g++' + suffix
 		env['AS'] =      prefix + 'gcc' + suffix
 		env['AR'] =      prefix + 'gcc-ar' + suffix
 		env['NM'] =      prefix + 'gcc-nm' + suffix
