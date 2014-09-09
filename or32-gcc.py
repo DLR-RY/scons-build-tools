@@ -159,6 +159,30 @@ def generate(env, **kw):
 		'-e 256',
 	]
 	
+	builder_hex = Builder(
+		action = Action("$OBJCOPY -O ihex $SOURCE $TARGET",
+		cmdstr = "$HEXCOMSTR"),
+		suffix = ".hex",
+		src_suffix = "")
+
+	builder_bin = Builder(
+		action = Action("$OBJCOPY -O binary $SOURCE $TARGET",
+		cmdstr = "$BINCOMSTR"),
+		suffix = ".bin",
+		src_suffix = "")
+
+	builder_listing = Builder(
+		action = Action("$OBJDUMP -x -s -S -l -w $SOURCE > $TARGET",
+		cmdstr = "$LSSCOMSTR"),
+		suffix = ".lss",
+		src_suffix = "")
+
+	env.Append(BUILDERS = {
+		'Hex': builder_hex,
+		'Bin': builder_bin,
+		'Listing': builder_listing
+	})
+	
 	env.AddMethod(strip_binary, 'Strip')
 
 def strip_binary(env, target, source, options="--strip-debug"):
