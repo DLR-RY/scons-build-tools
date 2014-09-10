@@ -47,6 +47,9 @@ def generate(env, **kw):
 	env['ARCHITECTURE'] = 'or32'
 	env['OS'] = 'none'
 	
+	# TODO remove this here and move it to the SConstruct files
+	env['BOARD'] = 'urtu-312'
+	
 	# used programs
 	prefix = env.get('COMPILERPATH', 'or32-aac-elf-')
 	env['CC'] =      prefix + 'gcc'
@@ -69,8 +72,6 @@ def generate(env, **kw):
 	else:
 		# Compiler version could not be detected
 		compiler_version = 0
-	
-	env['BOARD'] = 'urtu-312'
 	
 	# flags for C and C++
 	env['CCFLAGS'] = [
