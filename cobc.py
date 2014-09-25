@@ -58,10 +58,13 @@ def remove_from_list(env, identifier, to_remove):
 
 
 def filtered_glob(env, pattern, omit=None, ondisk=True, source=False, strings=False):
-    if omit is None:
-        omit = []
-
-    return filter(lambda f: os.path.basename(f.path) not in omit, env.Glob(pattern))
+	if omit is None:
+		omit = []
+	
+	results = []
+	for p in listify(pattern):
+		results.extend(filter(lambda f: os.path.basename(f.path) not in omit, env.Glob(p)))
+	return results
 
 
 def detect_gcc_version(env, gcc=None):
@@ -103,3 +106,4 @@ def generate(env, **kw):
 # -----------------------------------------------------------------------------
 def exists(env):
     return True
+
