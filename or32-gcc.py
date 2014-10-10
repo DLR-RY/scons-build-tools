@@ -157,7 +157,7 @@ def generate(env, **kw):
 		'$CCFLAGS',
 		'--gc-sections',
 		'-mboard=$BOARD',
-		'-e 256',
+		'-e256',
 	]
 	
 	builder_hex = Builder(
