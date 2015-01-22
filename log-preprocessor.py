@@ -48,6 +48,7 @@ def preprocessorEmitter(target, source, env):
         env.SideEffect(env['LOG_PREPROCESSOR_DB'], target)
         # Ensure that this additional file is deleted, too
         env.Clean(target, env['LOG_PREPROCESSOR_DB'])
+        env.Depends(target, source)
     return (newTarget, source)
 
 
