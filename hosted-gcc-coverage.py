@@ -30,22 +30,22 @@ from SCons.Script import *
 # -----------------------------------------------------------------------------
 def generate(env, **kw):
 	env.Tool('hosted-gcc')
-    
-    env.Append(CCFLAGS='--coverage')
-    env.Append(LINKFLAGS='--coverage')
-    
-    env['CCFLAGS_optimize'] = [
-    	'-O1',
-    	'-fno-default-inline',
-    	'-fno-inline-functions',
-    	'-fno-inline',
-    ]
-    
-    # The C++ standard allows an implementation to omit creating a temporary
-    # which is only used to initialize another object of the same type.
-    # Specifying this option disables that optimization, and forces G++ to
-    # call the copy constructor in all cases. 
-    env.AppendUnique(CXXFLAGS='-fno-elide-constructors')
+	
+	env.Append(CCFLAGS='--coverage')
+	env.Append(LINKFLAGS='--coverage')
+	
+	env['CCFLAGS_optimize'] = [
+		'-O1',
+		'-fno-default-inline',
+		'-fno-inline-functions',
+		'-fno-inline',
+	]
+	
+	# The C++ standard allows an implementation to omit creating a temporary
+	# which is only used to initialize another object of the same type.
+	# Specifying this option disables that optimization, and forces G++ to
+	# call the copy constructor in all cases. 
+	env.AppendUnique(CXXFLAGS='-fno-elide-constructors')
 
 # -----------------------------------------------------------------------------	
 def exists(env):
