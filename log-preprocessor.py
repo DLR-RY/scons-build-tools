@@ -1,7 +1,7 @@
 import os
 import sys
 import SCons
-
+import pprint
 ## Directory path of this SCons tool
 tool_path = os.path.dirname(__file__)
 ## Relative directory path of the logging preprocessor
@@ -24,8 +24,9 @@ def preprocessorAction(target, source, env):
                   "--source=%s "  \
                   "--target=%s "  \
                   "--db-path=%s " \
+                  "--db-prefix=%s " \
                   % (env['LOG_PREPROCESSOR'], source[0], 
-                     target[0], env['LOG_PREPROCESSOR_DB']))
+                     target[0], env['LOG_PREPROCESSOR_DB'], 1))
 
 
 ## Checks if the source file is already preprocessed and filters it if necessary. 
@@ -40,15 +41,14 @@ def preprocessorAction(target, source, env):
 # \return Tuple of the new target and the source file
 def preprocessorEmitter(target, source, env):
     newTarget = ""
-    if not str(source[0]).endswith(".pre.cpp"):
-        newTarget = target
-        # Register the database as an additional file which is generated during
-        # the build. This also ensures mutual exclusion when compiling in parallel
-        # with multiple jobs.
-        env.SideEffect(env['LOG_PREPROCESSOR_DB'], target)
-        # Ensure that this additional file is deleted, too
-        env.Clean(target, env['LOG_PREPROCESSOR_DB'])
-        env.Depends(target, source)
+    newTarget = target
+    # Register the database as an additional file which is generated during
+    # the build. This also ensures mutual exclusion when compiling in parallel
+    # with multiple jobs.
+    env.SideEffect(env['LOG_PREPROCESSOR_DB'], target)
+    # Ensure that this additional file is deleted, too
+    env.Clean(target, env['LOG_PREPROCESSOR_DB'])
+    env.Depends(target, source)
     return (newTarget, source)
 
 
@@ -57,7 +57,7 @@ def preprocessorEmitter(target, source, env):
 # \param env The environment
 def generate(env):
     env['LOG_PREPROCESSOR'] = preprocessor
-    env['LOG_PREPROCESSOR_DB'] = "./log.db"
+    env['LOG_PREPROCESSOR_DB'] = os.path.join(env["buildroot"][0], 'log-preprocessor.db')
     env['BUILDERS']['LogPreprocessor'] = \
         SCons.Script.Builder(
             action = SCons.Action.Action(
@@ -66,8 +66,8 @@ def generate(env):
             single_source = True,
             emitter = preprocessorEmitter,
             target_factory = env.fs.Entry,
-            src_suffix = ".cpp",
-            suffix = ".pre.cpp")
+            src_suffix = ".pp",
+            suffix = ".lpp")
 
 
 ## Checks if all prerequisites are met.

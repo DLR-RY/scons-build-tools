@@ -62,7 +62,9 @@ def generate(env, **kw):
 	# build messages
 	if ARGUMENTS.get('verbose') != '1':
 		env['CCCOMSTR'] =		'%sCompiling C:    %s$TARGET%s' % default
+		env['LOG_PREPROCESSOR_COMSTR'] =		'%sLog Preprocessing:    %s$TARGET%s' % default
 		env['CXXCOMSTR'] =		'%sCompiling C++:  %s$TARGET%s' % default
+		env['CXX_PP_COMSTR'] = '%sPrerocessing C++:  %s$TARGET%s' % default
 		env['ASCOMSTR'] =		'%sAssembling:     %s$TARGET%s' % default
 		env['ASPPCOMSTR'] =		'%sAssembling:     %s$TARGET%s' % default
 		env['LINKCOMSTR'] = 	'%sLinking:        %s$TARGET%s' % linking
@@ -74,8 +76,8 @@ def generate(env, **kw):
 		env['SHCXXCOMSTR'] =	'%sCompiling C++ (shared): %s$TARGET%s' % default
 		env['SHLINKCOMSTR'] =	'%sLinking (shared):       %s$TARGET%s' % linking
 		
-		# Warning: Due to an inconsitency in SCons these ASCII-art arrow is
-		#          neccessary to keep the indentation. Spaces would be removed.
+		# Warning: Due to an inconsistency in SCons these ASCII-art arrow is
+		#          necessary to keep the indentation. Spaces would be removed.
 		# 
 		# See also:
 		# http://scons.tigris.org/ds/viewMessage.do?dsForumId=1268&dsMessageId=2425232
@@ -85,11 +87,10 @@ def generate(env, **kw):
 		env['STRIPCOMSTR'] =	'%sStripping:      %s$TARGET%s' % linking
 		
 		env['SIZECOMSTR'] = 'Size after:'
-		env['HEXCOMSTR'] = 'Creating load file for Flash: $TARGET'
-		env['BINCOMSTR'] = 'Creating load file for Flash: $TARGET'
-		env['LSSCOMSTR'] = 'Creating Extended Listing: $TARGET'
+		env['HEXCOMSTR'] =      '%sIntel-Hex File: %s$TARGET%s' % default
+		env['BINCOMSTR'] =      '%sBinary File:    %s$TARGET%s' % default
+		env['LSSCOMSTR'] =      '%sExt. Listing:   %s$TARGET%s' % default
 
 # -----------------------------------------------------------------------------	
 def exists(env):
 	return True
-
