@@ -37,14 +37,19 @@ def relocate_to_buildpath(env, path, strip_extension=False):
 	path = str(path)
 	if strip_extension:
 		path = os.path.splitext(path)[0]
-	path = os.path.relpath(path, env['BASEPATH'])
-	if path.startswith('..'):
-		# if the file is not in a subpath of the current directory
-		# build it in the root directory of the build path
-		while path.startswith('..'):
-			path = path[3:]
-
-	return os.path.abspath(os.path.join(env['BUILDPATH'], path))
+	
+	# Do not relocate path if is already is inside of the build directory
+	if not os.path.abspath(path).startswith(os.path.abspath(env['BUILDPATH'])):
+		path = os.path.relpath(path, env['BASEPATH'])
+		if path.startswith('..'):
+			# if the file is not in a subpath of the current directory
+			# build it in the root directory of the build path
+			while path.startswith('..'):
+				path = path[3:]
+	
+		return os.path.abspath(os.path.join(env['BUILDPATH'], path))
+	else:
+		return os.path.abspath(path)
 
 # -----------------------------------------------------------------------------
 def generate(env, **kw):
@@ -82,6 +87,8 @@ def generate(env, **kw):
 
 	env['LIBEMITTER'] = defaultEmitter
 	env['PROGEMITTER'] = defaultEmitter
+	
+	env['BUILDPATH_EMITTER'] = defaultEmitter
 	
 	env.AddMethod(relocate_to_buildpath, 'Buildpath')
 

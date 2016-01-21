@@ -61,10 +61,12 @@ def generate(env, **kw):
 	
 	# build messages
 	if ARGUMENTS.get('verbose') != '1':
+		env['CXX_PREPARE_COMSTR'] =	\
+								'%sPrepare C++:    %s$TARGET%s' % default
+		env['LOG_PREPROCESSOR_COMSTR'] = \
+								'%sExtract Log:    %s$TARGET%s' % default
 		env['CCCOMSTR'] =		'%sCompiling C:    %s$TARGET%s' % default
-		env['LOG_PREPROCESSOR_COMSTR'] =		'%sLog Preprocessing:    %s$TARGET%s' % default
 		env['CXXCOMSTR'] =		'%sCompiling C++:  %s$TARGET%s' % default
-		env['CXX_PP_COMSTR'] = '%sPrerocessing C++:  %s$TARGET%s' % default
 		env['ASCOMSTR'] =		'%sAssembling:     %s$TARGET%s' % default
 		env['ASPPCOMSTR'] =		'%sAssembling:     %s$TARGET%s' % default
 		env['LINKCOMSTR'] = 	'%sLinking:        %s$TARGET%s' % linking
