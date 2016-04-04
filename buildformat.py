@@ -83,12 +83,12 @@ def generate(env, **kw):
 		# 
 		# See also:
 		# http://scons.tigris.org/ds/viewMessage.do?dsForumId=1268&dsMessageId=2425232
-		env['INSTALLSTR'] =     "%s .---Install--- %s$SOURCE\n" \
-		                        "%s '------------> %s$TARGET%s" % install
+		env['INSTALLSTR'] =     "%s.----Install--- %s$SOURCE\n" \
+		                        "%s'-------------> %s$TARGET%s" % install
 		
 		env['STRIPCOMSTR'] =	'%sStripping:      %s$TARGET%s' % linking
 		
-		env['SIZECOMSTR'] = 'Size after:'
+		env['SIZECOMSTR'] =     '%sSize after:%s%s'  % default
 		env['HEXCOMSTR'] =      '%sIntel-Hex File: %s$TARGET%s' % default
 		env['BINCOMSTR'] =      '%sBinary File:    %s$TARGET%s' % default
 		env['LSSCOMSTR'] =      '%sExt. Listing:   %s$TARGET%s' % default

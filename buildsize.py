@@ -29,6 +29,7 @@
 from SCons.Script import *
 
 import re
+import sys
 import subprocess
 
 # -----------------------------------------------------------------------------
@@ -66,7 +67,7 @@ def size_action(target, source, env):
 	stdout, stderr = p.communicate()
 	
 	if stderr is not None:
-		print "Error while running %s" % ' '.join(cmd)
+		sys.stderr.write("Error while running %s" % ' '.join(cmd))
 		Exit(1)
 	
 	flashSize = 0
@@ -95,7 +96,7 @@ def size_action(target, source, env):
 	
 	device = env['DEVICE_SIZE']['name']
 	
-	print """Memory Usage
+	sys.stdout.write("""Memory Usage
 ------------
 Device: %s
 
@@ -105,7 +106,7 @@ Program: %7d bytes (%2.1f%% Full)
 Data:    %7d bytes (%2.1f%% Full)
 (%s)
 """ % (device, flashSize, flashPercentage, ' + '.join(flashSections), \
-	ramSize, ramPercentage, ' + '.join(ramSections))
+	ramSize, ramPercentage, ' + '.join(ramSections)))
 
 # -----------------------------------------------------------------------------
 def show_size(env, source, alias='__size'):
@@ -114,7 +115,7 @@ def show_size(env, source, alias='__size'):
 	else:
 		# use the raw output of the size tool
 		action = Action("$SIZE %s" % source[0].path, 
-					cmdstr="$SIZECOMSTR")
+					    cmdstr="$SIZECOMSTR")
 	
 	return env.AlwaysBuild(env.Alias(alias, source, action))
 
