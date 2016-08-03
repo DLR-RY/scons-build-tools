@@ -40,6 +40,8 @@ def generate(env, **kw):
 	env.Tool('gnulink')
 	env.Tool('ar')
 	env.Tool('as')
+	
+	print(env['BSPPATH']);
 
 	env['PROGSUFFIX'] = ''
 	
@@ -47,8 +49,7 @@ def generate(env, **kw):
 	env['OS'] = 'rtems'
 	
 	# used programs
-	#env['COMPILERPATH'] = '/opt/aac/gcc-rtems/bin/'
-	prefix = env.get('COMPILERPATH', 'or1k-aac-rtems4.11-')
+	prefix = env['COMPILERPATH']+ 'or1k-aac-rtems4.11-'
 	env['CC'] =      prefix + 'gcc'
 	env['CXX'] =     prefix + 'g++'
 	env['AS'] =      prefix + 'as'
@@ -108,8 +109,8 @@ def generate(env, **kw):
 	# Add following flag '-qleon3std' for using modified version of GRSPW & APBUART driver.
 	# This will compile the standard RTEMS library for manual driver manager registration
 	# Otherwise remove the '-qleon3std' flag for automatic driver registration
-	env['CCFLAGS_other'] = ['-B/home/user/development/aac/aac-or1k-obc-s-bsp/src/librtems/or1k-aac-rtems4.11/or1k-aac/lib/', '-qrtems', '-specs', 'bsp_specs']	#['-qleon3std']
-	env['CXXFLAGS_other'] = ['-B/home/user/development/aac/aac-or1k-obc-s-bsp/src/librtems/or1k-aac-rtems4.11/or1k-aac/lib/', '-qrtems']	#['-qleon3std']
+	env['CCFLAGS_other'] = ['-B'+env["BSPPATH"], '-qrtems', '-specs', 'bsp_specs']	#['-qleon3std']
+	env['CXXFLAGS_other'] = ['-B'+env["BSPPATH"], '-qrtems']	#['-qleon3std']
 	
 	# C flags
 	env['CFLAGS'] = [
@@ -136,7 +137,7 @@ def generate(env, **kw):
 	]
 	
 	env['CXXFLAGS_language'] = [
-		'-std=c++98',
+		'-std=c++11',
 		'-pedantic',
 		'-fno-rtti',
 		'-fno-exceptions',
