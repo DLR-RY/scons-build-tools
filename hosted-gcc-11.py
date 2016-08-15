@@ -28,13 +28,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import commands
-
 from SCons.Script import *
 
 # -----------------------------------------------------------------------------
 def generate(env, **kw):
-	
 	env.Append(ENV = {'PATH' : os.environ['PATH']})
 	env.Tool('gcc')
 	env.Tool('g++')
@@ -44,25 +41,34 @@ def generate(env, **kw):
 
 	env['PROGSUFFIX'] = ''
 	
-	env['ARCHITECTURE'] = 'or1k'
-	env['OS'] = 'rtems'
+	env['ARCHITECTURE'] = 'hosted'
+	env['OS'] = 'posix'
 	
 	# used programs
-	prefix = env['COMPILERPATH']+ 'or1k-aac-rtems4.11-'
-	env['CC'] =      prefix + 'gcc'
-	env['CXX'] =     prefix + 'g++'
-	env['AS'] =      prefix + 'as'
+	prefix = env.get('COMPILERPATH', '')
+	suffix = env.get('COMPILERVERSION', '')
+	if suffix != '' and not suffix.startswith('-'):
+		suffix = '-' + suffix
+	
+	env['CC'] =      prefix + 'gcc' + suffix
+	env['CXX'] =     prefix + 'g++' + suffix
+	if suffix == '':
+		env['AS'] =      prefix + 'as'
+		env['AR'] =      prefix + 'ar'
+		env['NM'] =      prefix + 'nm'
+		env['RANLIB'] =  prefix + 'ranlib'
+	else:
+		env['AS'] =      prefix + 'gcc' + suffix
+		env['AR'] =      prefix + 'gcc-ar' + suffix
+		env['NM'] =      prefix + 'gcc-nm' + suffix
+		env['RANLIB'] =  prefix + 'gcc-ranlib' + suffix
+	
 	env['OBJCOPY'] = prefix + 'objcopy'
 	env['OBJDUMP'] = prefix + 'objdump'
-	env['AR'] =      prefix + 'ar'
-	env['NM'] =      prefix + 'nm'
-	env['RANLIB'] =  prefix + 'ranlib'
 	env['SIZE'] =    prefix + 'size'
 	env['STRIP'] =   prefix + 'strip'
 	
-	v = commands.getoutput(env['CXX'] + ' -dumpversion')	# v = 4.6.1
-	v = [int(x) for x in v.split('.')]						# v = [4, 6, 1]
-	compiler_version = v[0] * 10000 + v[1] * 100 + v[2]		# v = 40601
+	env['LINK'] =    env['CXX']
 	
 	# flags for C and C++
 	env['CCFLAGS'] = [
@@ -73,11 +79,8 @@ def generate(env, **kw):
 		'$CCFLAGS_other'
 	]
 	
-	# Without a '-q*' option, '-qleon3' is used (see Gaisler rcc-1.2.0
-	# documentation) although it is not recognized when added as an explizit
-	# parameter.
-	#env['CCFLAGS_target'] = ['-mcpu=v8', '-msoft-float',]
-	env['CCFLAGS_optimize'] = ['-O2', '-ffunction-sections', '-fdata-sections',]
+	env['CCFLAGS_target'] = []
+	env['CCFLAGS_optimize'] = ['-O2']
 	env['CCFLAGS_debug'] = ['-g']
 	env['CCFLAGS_warning'] = [
 		'-W',
@@ -95,21 +98,14 @@ def generate(env, **kw):
 		'-Wredundant-decls',
 		'-Wunused',
 		'-Wuninitialized',
-		# allow 64-bit integer types even if they are not included in ISO C++98
-		'-Wno-long-long',
+#		'-Wdouble-promotion',	# only for GCC 4.6 and later
 		'-Wshadow',
 #		'-Wconversion',
-	]
-	
-	# only after for gcc >= 4.6
-	if compiler_version >= 40600:
-		env['CCFLAGS_warning'].append('-Wdouble-promotion')
 
-	# Add following flag '-qleon3std' for using modified version of GRSPW & APBUART driver.
-	# This will compile the standard RTEMS library for manual driver manager registration
-	# Otherwise remove the '-qleon3std' flag for automatic driver registration
-	env['CCFLAGS_other'] = ['-B'+env["BSPPATH"], '-qrtems', '-specs', 'bsp_specs']	#['-qleon3std']
-	env['CXXFLAGS_other'] = ['-B'+env["BSPPATH"], '-qrtems']	#['-qleon3std']
+		# allow 64-bit integer types even if they are not included in ISO C++98
+		'-Wno-long-long',
+	]
+	env['CCFLAGS_other'] = []
 	
 	# C flags
 	env['CFLAGS'] = [
@@ -138,8 +134,6 @@ def generate(env, **kw):
 	env['CXXFLAGS_language'] = [
 		'-std=c++11',
 		'-pedantic',
-		'-fno-rtti',
-		'-fno-exceptions',
 	]
 	
 	env['CXXFLAGS_warning'] = [
@@ -151,44 +145,6 @@ def generate(env, **kw):
 	env['LINKFLAGS'] = [
 		'$CCFLAGS',
 	]
-	
-	builder_hex = Builder(
-		action = Action("$OBJCOPY -O ihex $SOURCE $TARGET",
-		cmdstr = "$HEXCOMSTR"),
-		suffix = ".hex",
-		src_suffix = "")
-
-	builder_bin = Builder(
-		action = Action("$OBJCOPY -O binary $SOURCE $TARGET",
-		cmdstr = "$BINCOMSTR"),
-		suffix = ".bin",
-		src_suffix = "")
-	
-	builder_flash = Builder(
-		action = Action("@make -C $NAND_PATH $TARGET PROGRAMMINGFILE=$SOURCE OUT="+os.path.abspath(env["NAND_PATH"]+'nandflash-program')+" > /dev/null",
-		cmdstr = "$LSSCOMSTR"),
-		suffix = ".elf",
-		src_suffix = "")
-	
-	builder_copy = Builder(
-		action = Action("cp $SOURCE $TARGET",
-		cmdstr = "$INSTALLSTR"),
-		suffix = ".elf",
-		src_suffix = "")
-
-	builder_listing = Builder(
-		action = Action("$OBJDUMP -x -s -S -l -w $SOURCE > $TARGET",
-		cmdstr = "$LSSCOMSTR"),
-		suffix = ".lss",
-		src_suffix = "")
-
-	env.Append(BUILDERS = {
-		'Hex': builder_hex,
-		'Bin': builder_bin,
-		'Listing': builder_listing,
-		'NandFlash' : builder_flash,
-		'NandCopy' : builder_copy
-	})
 	
 	env.AddMethod(strip_binary, 'Strip')
 
