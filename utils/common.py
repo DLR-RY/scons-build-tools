@@ -11,9 +11,6 @@
 # * Redistributions in binary form must reproduce the above copyright
 #   notice, this list of conditions and the following disclaimer in the
 #   documentation and/or other materials provided with the distribution.
-# * Neither the name of the German Aerospace Center (DLR) nor the
-#   names of its contributors may be used to endorse or promote products
-#   derived from this software without specific prior written permission.
 # 
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -33,14 +30,13 @@ import commands
 
 from SCons.Script import *
 
-
-def listify(node):
+def _listify(node):
     return [node, ] if (not isinstance(node, list) and
                         not isinstance(node, SCons.Node.NodeList)) else node
 
-
 def remove_from_list(env, identifier, to_remove):
-    """ Remove strings from a list.
+    """
+    Remove strings from a list.
 
     E.g.
     env.RemoveFromList('$CXXFLAGS_warning', ['-Wold-style-cast'])
@@ -51,59 +47,48 @@ def remove_from_list(env, identifier, to_remove):
     l = env.subst('$' + identifier)
     if isinstance(l, str):
         l = l.split(' ')
-    for r in listify(to_remove):
+    for r in _listify(to_remove):
         if r in l:
             l.remove(r)
     env[identifier] = l
-
 
 def filtered_glob(env, pattern, omit=None, ondisk=True, source=False, strings=False):
 	if omit is None:
 		omit = []
 	
 	results = []
-	for p in listify(pattern):
+	for p in _listify(pattern):
 		results.extend(filter(lambda f: os.path.basename(f.path) not in omit, env.Glob(p)))
 	return results
 
+def list_symbols(env, source, alias='__symbols'):
+    action = Action("$NM %s -S -C --size-sort -td" % source[0].path,
+                    cmdstr="$SYMBOLSCOMSTR")
+    return env.AlwaysBuild(env.Alias(alias, source, action))
 
-def detect_gcc_version(env, gcc=None):
-    """"Detect the version of the used GCC.
+def run_program(env, program):
+    return env.Command('thisfileshouldnotexist', program, '@"%s"' % program[0].abspath)
 
-    Used env['CXX'] as reference. A version string such as 4.4.3 is transformed into an
-    integer with two characters per level, here: 40403.
-
-    Examples:
-      4.7    -> 40700
-      4.6.5  -> 40605
-      4.3.10 -> 40310
-    """""
-    if gcc is None:
-        gcc = env['CXX']
-    version_str = commands.getoutput(gcc + ' -dumpversion')
-
-    version = 0
-    offset = 1
-    figures = version_str.split('.')
-    while len(figures) < 3:
-        figures.append("0")
-
-    figures.reverse()
-    for figure in figures:
-        version += int(figure) * offset
-        offset *= 100
-
-    return version
-
+def phony_target(env, **kw):
+    for target, action in kw.items():
+        env.AlwaysBuild(env.Alias(target, [], action))
 
 # -----------------------------------------------------------------------------
 def generate(env, **kw):
+    env.Append(ENV={'PATH' : os.environ['PATH']})
+
     env.AddMethod(remove_from_list, 'RemoveFromList')
     env.AddMethod(filtered_glob, 'FilteredGlob')
-    env.AddMethod(detect_gcc_version, 'DetectGccVersion')
+
+    if ARGUMENTS.get('verbose') != '1':
+        env['SYMBOLSCOMSTR'] = "Show symbols for '$SOURCE':"
+
+    env.AddMethod(list_symbols, 'Symbols')
+
+    env.AddMethod(run_program, 'Run')
+    env.AddMethod(phony_target, 'Phony')
 
 
-# -----------------------------------------------------------------------------
 def exists(env):
     return True
 

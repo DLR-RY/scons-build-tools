@@ -26,13 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from SCons.Script import *
-
 import re
 import sys
 import subprocess
 
-# -----------------------------------------------------------------------------
+from SCons.Script import *
+
 # Output of 'arm-none-eabi-size -A build/stm32_p103.elf':
 # build/stm32_p103.elf  :
 # section             size        addr
@@ -53,11 +52,11 @@ import subprocess
 filter = re.compile('^(?P<section>[.]\w+)\s*(?P<size>\d+)\s*(?P<addr>\d+)$')
 
 # Sections which will remain in the Flash
-flashSectionNames = ['.reset', '.fastcode', '.text', '.rodata', '.data']
+flash_section_names = ['.reset', '.fastcode', '.text', '.rodata', '.data']
 
 # Sections which will be created in RAM or are copied from the Flash. In that
-# case the section will appear also in `flashSectionNames`.
-ramSectionNames = ['.vectors', '.fastcode', '.data', '.bss', '.noinit']
+# case the section will appear also in `flash_section_names`.
+ram_section_names = ['.vectors', '.fastcode', '.data', '.bss', '.noinit']
 
 def size_action(target, source, env):
 	cmd = [env['SIZE'], '-A', str(source[0])]
@@ -70,29 +69,29 @@ def size_action(target, source, env):
 		sys.stderr.write("Error while running %s" % ' '.join(cmd))
 		Exit(1)
 	
-	flashSize = 0
-	ramSize = 0
-	flashSections = {}
-	ramSections = {}
+	flash_size = 0
+	ram_size = 0
+	flash_sections = {}
+	ram_sections = {}
 	for line in stdout.splitlines():
 		match = filter.match(line)
 		if match:
 			section = match.group('section')
-			if section in flashSectionNames:
-				flashSize += int(match.group('size'))
-				flashSections[section] = 1
-			if section in ramSectionNames:
-				ramSize += int(match.group('size'))
-				ramSections[section] = 1
+			if section in flash_section_names:
+				flash_size += int(match.group('size'))
+				flash_sections[section] = 1
+			if section in ram_section_names:
+				ram_size += int(match.group('size'))
+				ram_sections[section] = 1
 	
 	# create lists of the used sections for Flash and RAM
-	flashSections = flashSections.keys()
-	flashSections.sort()
-	ramSections = ramSections.keys()
-	ramSections.sort()
+	flash_sections = flash_sections.keys()
+	flash_sections.sort()
+	ram_sections = ram_sections.keys()
+	ram_sections.sort()
 	
-	flashPercentage = flashSize / float(env['DEVICE_SIZE']['flash']) * 100.0
-	ramPercentage = ramSize / float(env['DEVICE_SIZE']['ram']) * 100.0
+	flash_percentage = flash_size / float(env['DEVICE_SIZE']['flash']) * 100.0
+	ram_percentage = ram_size / float(env['DEVICE_SIZE']['ram']) * 100.0
 	
 	device = env['DEVICE_SIZE']['name']
 	
@@ -105,10 +104,10 @@ Program: %7d bytes (%2.1f%% Full)
 
 Data:    %7d bytes (%2.1f%% Full)
 (%s)
-""" % (device, flashSize, flashPercentage, ' + '.join(flashSections), \
-	ramSize, ramPercentage, ' + '.join(ramSections)))
+""" % (device, flash_size, flash_percentage, ' + '.join(flash_sections), \
+	ram_size, ram_percentage, ' + '.join(ram_sections)))
 
-# -----------------------------------------------------------------------------
+
 def show_size(env, source, alias='__size'):
 	if env.has_key('DEVICE_SIZE'):
 		action = Action(size_action, cmdstr="$SIZECOMSTR")
@@ -119,19 +118,22 @@ def show_size(env, source, alias='__size'):
 	
 	return env.AlwaysBuild(env.Alias(alias, source, action))
 
+
 def list_symbols(env, source, alias='__symbols'):
 	action = Action("$NM %s -S -C --size-sort -td" % source[0].path, 
 					cmdstr="$SYMBOLSCOMSTR")
 	return env.AlwaysBuild(env.Alias(alias, source, action))
 
+
 def run_program(env, program):
 	return env.Command('thisfileshouldnotexist', program, '@"%s"' % program[0].abspath)
+
 
 def phony_target(env, **kw):
 	for target, action in kw.items():
 		env.AlwaysBuild(env.Alias(target, [], action))
 
-# -----------------------------------------------------------------------------
+
 def generate(env, **kw):
 	if ARGUMENTS.get('verbose') != '1':
 		env['SIZECOMSTR'] = "Size after:"
@@ -142,6 +144,7 @@ def generate(env, **kw):
 	
 	env.AddMethod(run_program, 'Run')
 	env.AddMethod(phony_target, 'Phony')
+
 
 def exists(env):
 	return True
