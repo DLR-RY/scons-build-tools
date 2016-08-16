@@ -21,8 +21,8 @@ Available tools:
 - or32_aac_elf_gcc
 
 
-Buildflags
-----------
+Build flags
+-----------
 
 The standard Unix build flags like CCFLAGS are split into several environment
 variables. With this the cross compiler can set several options while allowing
@@ -89,7 +89,7 @@ in a temporary file to avoid problems with over-long command line arguments
 With 'buildpath' it is possible to perform out-of-source builds. The tool must
 be loaded **after** the compiler because it alters the emitters for object files
 and libraries. The build folder can be specified by setting the 'BUILDPATH' and
-'BASEPATH' enviroment variables.
+'BASEPATH' environment variables.
 
 
 Folder 'utils'
