@@ -39,7 +39,7 @@ def generate(env, **kw):
 	env.SetDefault(LINKFLAGS_target=['-Xlinker'])
 	env.SetDefault(LINKFLAGS_optimize=['--gc-sections', ])
 	
-	env.Tool('settings/gcc_default_internal')
+	env.Tool('settings_gcc_default_internal')
 
 def exists(env):
 	return env.Detect('gcc')

@@ -43,8 +43,8 @@ def generate(env, **kw):
     env.Tool('ar')
     env.Tool('as')
 
-    env.Tool('utils/common')
-    env.Tool('utils/gcc_version')
+    env.Tool('utils_common')
+    env.Tool('utils_gcc_version')
 
     # Define executable name of the compiler
     path = env.get('COMPILERPATH', '')

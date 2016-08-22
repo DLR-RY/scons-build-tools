@@ -24,44 +24,23 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import os
-
 from SCons.Script import *
 
 def generate(env, **kw):
-	env['PROGSUFFIX'] = ''
-	env['ARCHITECTURE'] = 'or1k'
-	env['OS'] = 'rtems'
-	
-	env.SetDefault(COMPILERPREFIX='or1k-aac-rtems4.11-')
+	env.Tool('compiler_hosted_llvm')
 
-	env.SetDefault(CCFLAGS_optimize=['-O2', '-ffunction-sections', '-fdata-sections', ])
-	env.SetDefault(CCFLAGS_target=['-B${BSPPATH}', '-qrtems', '-specs', 'bsp_specs'])
-	
-	env.SetDefault(CXXFLAGS_dialect=['-fno-rtti', '-fno-exceptions', ])
+	env['CCFLAGS_other'] = [
+		'-fsanitize=address',
+		'-fno-omit-frame-pointer',
+		'-fno-optimize-sibling-calls'
+	]
+	env['CCFLAGS_optimize'] = ['-O1']
 
-	env.SetDefault(LINKFLAGS_optimize=['--gc-sections', ])
-
-	builder_flash = Builder(
-		action=Action("@make -C $NAND_PATH $TARGET PROGRAMMINGFILE=$SOURCE " \
-					    "OUT=%s > /dev/null" % os.path.abspath(env["NAND_PATH"] + 'nandflash-program'),
-		              cmdstr="$LSSCOMSTR"),
-		suffix=".elf",
-		src_suffix="")
-	
-	builder_copy = Builder(
-		action=Action("cp $SOURCE $TARGET",
-					  cmdstr="$INSTALLSTR"),
-		suffix=".elf",
-		src_suffix="")
-
-	env.Append(BUILDERS = {
-		'NandFlash' : builder_flash,
-		'NandCopy' : builder_copy
-	})
-
-	env.Tool('settings/gcc_default_internal')
+	# Uses the clang static analyzer, see http://clang-analyzer.llvm.org/
+	if ARGUMENTS.get('analyze') != None:
+		env['CC'] =  'ccc-analyzer'
+		env['CXX'] = 'c++-analyzer'
+		env['CCFLAGS_optimize'] = ['-O0']
 
 def exists(env):
-	return env.Detect('gcc')
-	
+	return env.Detect('clang')

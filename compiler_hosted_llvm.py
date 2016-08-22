@@ -28,22 +28,30 @@ from SCons.Script import *
 
 def generate(env, **kw):
 	env['PROGSUFFIX'] = ''
-	env['ARCHITECTURE'] = 'leon3'
-	env['OS'] = 'rtems'
+	env['ARCHITECTURE'] = 'hosted'
+	env['OS'] = 'posix'
 	
-	env.SetDefault(COMPILERPREFIX='sparc-rtems-')
+	env.Tool('settings_gcc_default_internal')
 
-	# Without a '-q*' option, '-qleon3' is used (see Gaisler rcc-1.2.0
-	# documentation) although it is not recognized when added as an explicit
-	# parameter.
-	env.SetDefault(CCFLAGS_target=['-mcpu=v8', '-msoft-float', ])
-	env.SetDefault(CCFLAGS_optimize=['-O2', '-ffunction-sections', '-fdata-sections', ])
+	# Clang uses the same settings as GCC but requires a different naming
+	# schema for the binutils
+	prefix = env.get('COMPILERPREFIX', '')
+	env['CC'] =      prefix + 'clang'
+	env['CXX'] =     prefix + 'clang++'
+	env['AS'] =      prefix + 'llvm-as'
+	env['OBJCOPY'] = prefix + 'objcopy'			# not available
+	env['OBJDUMP'] = prefix + 'llvm-objdump'
+	env['AR'] =      prefix + 'llvm-ar'
+	env['NM'] =      prefix + 'nm'				# not available
+	env['RANLIB'] =  prefix + 'ranlib'			# not available
+	env['SIZE'] =    prefix + 'llvm-size'
+	
+	# No LLVM equivalent available, use the GCC version if requested.
+	env['STRIP'] = 'strip'
 
-	env.SetDefault(CXXFLAGS_dialect=['-fno-rtti', '-fno-exceptions', ])
+	env['LINK'] = env['CXX']
 
-	env.SetDefault(LINKFLAGS_optimize=['--gc-sections', ])
-
-	env.Tool('settings/gcc_default_internal')
-
+# -----------------------------------------------------------------------------	
 def exists(env):
-	return env.Detect('gcc')
+	return env.Detect('clang')
+	

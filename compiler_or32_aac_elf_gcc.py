@@ -28,30 +28,22 @@ from SCons.Script import *
 
 def generate(env, **kw):
 	env['PROGSUFFIX'] = ''
-	env['ARCHITECTURE'] = 'hosted'
-	env['OS'] = 'posix'
+	env['ARCHITECTURE'] = 'or32'
+	env['OS'] = 'none'
 	
-	env.Tool('settings/gcc_default_internal')
+	env.SetDefault(COMPILERPREFIX='or32-aac-elf-')
+	env.SetDefault(BOARD='urtu-312')
 
-	# Clang uses the same settings as GCC but requires a different naming
-	# schema for the binutils
-	prefix = env.get('COMPILERPREFIX', '')
-	env['CC'] =      prefix + 'clang'
-	env['CXX'] =     prefix + 'clang++'
-	env['AS'] =      prefix + 'llvm-as'
-	env['OBJCOPY'] = prefix + 'objcopy'			# not available
-	env['OBJDUMP'] = prefix + 'llvm-objdump'
-	env['AR'] =      prefix + 'llvm-ar'
-	env['NM'] =      prefix + 'nm'				# not available
-	env['RANLIB'] =  prefix + 'ranlib'			# not available
-	env['SIZE'] =    prefix + 'llvm-size'
+	env.SetDefault(CCFLAGS_optimize=['-O2', '-ffunction-sections', '-fdata-sections', ])
+	env.SetDefault(CCFLAGS_target=['-mhard-mul', '-mhard-div', '-mhard-float', ])
 	
-	# No LLVM equivalent available, use the GCC version if requested.
-	env['STRIP'] = 'strip'
+	env.SetDefault(CXXFLAGS_dialect=['-fno-rtti', '-fno-exceptions', ])
 
-	env['LINK'] = env['CXX']
+	env.SetDefault(LINKFLAGS_optimize=['--gc-sections', ])
+	env.SetDefault(LINKFLAGS_target=['-mboard=$BOARD', '-e256', ])
 
-# -----------------------------------------------------------------------------	
+	env.Tool('settings_gcc_default_internal')
+
 def exists(env):
-	return env.Detect('clang')
+	return env.Detect('gcc')
 	
