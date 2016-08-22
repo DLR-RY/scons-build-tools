@@ -31,7 +31,7 @@ import SCons
 ## Directory path of this SCons tool
 tool_path = os.path.dirname(__file__)
 ## Relative directory path of the logging preprocessor
-preprocessor_path = "../../../../modules/log/tools/preprocessor"
+preprocessor_path = "../../../modules/log/tools/preprocessor"
 ## Path of the logging preprocessor
 preprocessor = os.path.join(tool_path, preprocessor_path, "preprocessor.py")
 
