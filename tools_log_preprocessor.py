@@ -44,15 +44,19 @@ preprocessor = os.path.join(tool_path, preprocessor_path, "preprocessor.py")
 # \param source The source file
 # \param env The environment
 def preprocessorAction(target, source, env):
+    if ("g++" in env["CXX"] or "gcc" in env["CXX"]) and "pedantic" in env.subst("$CXXFLAGS"):
+        # GCC produces a lot of "warning: style of line directive is a GCC extension"
+        # when compiling its own preprocessor output with the pedantic flag active.
+        raise SCons.Errors.UserError("The '-pedantic' flag is not supported when "
+                                     "compiling output of the logging preprocessor with GCC.")
     if source:
-        os.system("python2.7 %s " \
-                  "--source=%s "  \
-                  "--target=%s "  \
-                  "--db-path=%s " \
-                  "--db-prefix=%s " \
+        os.system("python2 %s "
+                  "--source=%s "
+                  "--target=%s "
+                  "--db-path=%s "
+                  "--db-prefix=%s "
                   % (env['LOG_PREPROCESSOR'], source[0], 
                      target[0], env['LOG_PREPROCESSOR_DB'], 1))
-
 
 ## Checks if the source file is already preprocessed and filters it if necessary. 
 #
@@ -76,7 +80,7 @@ def preprocessorEmitter(target, source, env):
     env.Depends(target, source)
     return (newTarget, source)
 
-def build_log_object(env, source, alias='__size'):
+def build_log_object(env, source, alias=None):
     return env.LogObjectFile(env.LogPreProcessed(env.CppPreProcessed(source)))
 
 ## Configures the builder of the logging preprocessor.
@@ -87,8 +91,8 @@ def generate(env):
         print("\nERROR: Please load the 'buildpath' tool before 'log-preprocessor'.\n")
         env.Exit(1)
     
-    env['LOG_PREPROCESSOR'] = preprocessor
-    env['LOG_PREPROCESSOR_DB'] = os.path.join(env["BUILDPATH"], 'log-preprocessor.db')
+    env.SetDefault(LOG_PREPROCESSOR=preprocessor)
+    env.SetDefault(LOG_PREPROCESSOR_DB=os.path.join(env["BUILDPATH"], 'log-preprocessor.db'))
     
     builder_cpp_preprocessor = \
         SCons.Script.Builder(
