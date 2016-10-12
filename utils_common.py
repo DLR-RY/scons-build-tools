@@ -39,7 +39,7 @@ def remove_from_list(env, identifier, to_remove):
     Remove strings from a list.
 
     E.g.
-    env.RemoveFromList('$CXXFLAGS_warning', ['-Wold-style-cast'])
+    env.RemoveFromList('CXXFLAGS_warning', ['-Wold-style-cast'])
     """
     if identifier.startswith('$'):
         raise Exception("identifier '%s' must not start with '$'!" % identifier)
