@@ -44,9 +44,10 @@ preprocessor = os.path.join(tool_path, preprocessor_path, "preprocessor.py")
 # \param source The source file
 # \param env The environment
 def preprocessorAction(target, source, env):
-    if ("g++" in env["CXX"] or "gcc" in env["CXX"]) and "pedantic" in env.subst("$CXXFLAGS"):
+    if (("g++" in env["CXX"] and not "clang++" in env["CXX"]) or "gcc" in env["CXX"]) and "pedantic" in env.subst("$CXXFLAGS"):
         # GCC produces a lot of "warning: style of line directive is a GCC extension"
         # when compiling its own preprocessor output with the pedantic flag active.
+        print(env["CXX"])
         raise SCons.Errors.UserError("The '-pedantic' flag is not supported when "
                                      "compiling output of the logging preprocessor with GCC.")
     if source:
@@ -88,7 +89,7 @@ def build_log_object(env, source, alias=None):
 # \param env The environment
 def generate(env):
     if not env.has_key("BUILDPATH"):
-        print("\nERROR: Please load the 'buildpath' tool before 'log-preprocessor'.\n")
+        print("\nERROR: Please load the 'buildpath' tool before 'tools_log_preprocessor'.\n")
         env.Exit(1)
     
     env.SetDefault(LOG_PREPROCESSOR=preprocessor)
