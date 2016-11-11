@@ -29,7 +29,7 @@ import commands
 
 from SCons.Script import *
 
-def strip_binary(env, target, source, options="--strip-debug"):
+def strip_binary(env, target, source, options="--strip-unneeded"):
     return env.Command(target,
                        source,
                        Action("$STRIP %s -o %s %s" % (options, target, source[0]),
