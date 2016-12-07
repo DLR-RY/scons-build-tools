@@ -37,7 +37,7 @@ def generate(env, **kw):
 	# documentation) although it is not recognized when added as an explicit
 	# parameter.
 	env.SetDefault(CCFLAGS_target=['-mcpu=v8', '-msoft-float', ])
-	env.SetDefault(CCFLAGS_optimize=['-O2', '-ffunction-sections', '-fdata-sections', '-funwind-tables'])
+	env.SetDefault(CCFLAGS_optimize=['-O2', '-ffunction-sections', '-fdata-sections'])
 
 	env.SetDefault(CXXFLAGS_dialect=['-fno-rtti', '-fno-exceptions', ])
 
