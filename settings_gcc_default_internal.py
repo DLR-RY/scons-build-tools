@@ -155,7 +155,12 @@ def generate(env, **kw):
         '$CCFLAGS',
         '$LINKFLAGS_target',
         '$LINKFLAGS_optimize',
+        '$LINKFLAGS_other'
     ]
+
+    env.SetDefault(LINKFLAGS_other=[
+        '-Wl,-Map,${TARGET.base}.map',
+    ])
 
     builder_hex = Builder(
         action=Action("$OBJCOPY -O ihex $SOURCE $TARGET",
