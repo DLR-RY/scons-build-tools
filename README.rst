@@ -37,7 +37,7 @@ The standard Unix build flags like ``CCFLAGS`` are split into several
 environment variables. With this the cross compiler can set several
 options while allowing the user to change other parts.
 
-The following environment variables are available: 
+The following environment variables are available:
 
 Options for C and C++ (``CCFLAGS``):
 
@@ -95,7 +95,7 @@ Available tools:
 
 The ``setttings_gcc_default_internal`` tool is not intended to be used
 by the user but is loaded by the GCC based compilers to define a common
-set of options. 
+set of options.
 
 If the ``setttings_gcc_optionsfile`` tool is loaded the GCC command line
 options are passed in a temporary file to avoid problems with over-long
@@ -150,8 +150,7 @@ Group 'tools'
 Tools from the ``tools`` prefix generate additional files.
 
 Available tools:
-
-- tools_log_preprocessor
+ -
 
 
 License
