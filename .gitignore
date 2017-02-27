@@ -1,2 +1,10 @@
+
+# Temporary files
 *.pyc
 __pycache__
+
+# Editor files
+.project
+.cproject
+.settings/
+.pydevproject
