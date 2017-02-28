@@ -40,7 +40,7 @@ def detect_gcc_version(env, gcc=None):
         # Compiler version could not be detected
         compiler_version = 0
 
-    return version
+    return compiler_version
 
 
 def generate(env, **kw):
