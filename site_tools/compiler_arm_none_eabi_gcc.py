@@ -12,20 +12,22 @@
 
 from SCons.Script import *
 
-def generate(env, **kw):
-	env['PROGSUFFIX'] = '.elf'
-	env['ARCHITECTURE'] = 'arm'
-	env.SetDefault(OS='none')
-	
-	env.SetDefault(COMPILERPREFIX='arm-none-eabi-')
-	
-	env.SetDefault(CCFLAGS_target=['-mcpu=arm7tdmi'])
-	env.SetDefault(CCFLAGS_optimize=['-O2', '-ffunction-sections', '-fdata-sections', ])
 
-	env.SetDefault(LINKFLAGS_target=['-Xlinker'])
-	env.SetDefault(LINKFLAGS_optimize=['--gc-sections', ])
-	
-	env.Tool('settings_gcc_default_internal')
+def generate(env, **kw):
+    env['PROGSUFFIX'] = '.elf'
+    env['ARCHITECTURE'] = 'arm'
+    env.SetDefault(OS='none')
+
+    env.SetDefault(COMPILERPREFIX='arm-none-eabi-')
+
+    env.SetDefault(CCFLAGS_target=['-mcpu=arm7tdmi'])
+    env.SetDefault(CCFLAGS_optimize=['-O2', '-ffunction-sections', '-fdata-sections', ])
+
+    env.SetDefault(LINKFLAGS_target=['-Xlinker'])
+    env.SetDefault(LINKFLAGS_optimize=['--gc-sections', ])
+
+    env.Tool('settings_gcc_default_internal')
+
 
 def exists(env):
-	return env.Detect('gcc')
+    return env.Detect('gcc')

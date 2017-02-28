@@ -16,9 +16,11 @@ import commands
 
 from SCons.Script import *
 
+
 def _listify(node):
     return [node, ] if (not isinstance(node, list) and
                         not isinstance(node, SCons.Node.NodeList)) else node
+
 
 def remove_from_list(env, identifier, to_remove):
     """
@@ -28,7 +30,7 @@ def remove_from_list(env, identifier, to_remove):
     env.RemoveFromList('CXXFLAGS_warning', ['-Wold-style-cast'])
     """
     if identifier.startswith('$'):
-        raise Exception("identifier '%s' must not start with '$'!" % identifier)
+        raise Exception("Identifier '%s' must not start with '$'!" % identifier)
 
     l = env.subst('$' + identifier)
     if isinstance(l, str):
@@ -38,30 +40,38 @@ def remove_from_list(env, identifier, to_remove):
             l.remove(r)
     env[identifier] = l
 
+
 def filtered_glob(env, pattern, omit=None, ondisk=True, source=False, strings=False):
-	if omit is None:
-		omit = []
-	
-	results = []
-	for p in _listify(pattern):
-		results.extend(filter(lambda f: os.path.basename(f.path) not in omit, env.Glob(p)))
-	return results
+    if omit is None:
+        omit = []
+
+    results = []
+    for p in _listify(pattern):
+        results.extend(filter(lambda f: os.path.basename(f.path) not in omit,
+                              env.Glob(p)))
+    return results
+
 
 def list_symbols(env, source, alias='__symbols'):
     action = Action("$NM %s -S -C --size-sort -td" % source[0].path,
                     cmdstr="$SYMBOLSCOMSTR")
     return env.AlwaysBuild(env.Alias(alias, source, action))
 
+
 def run_program(env, program):
-    return env.Command('thisfileshouldnotexist', program, '@"%s"' % program[0].abspath)
+    return env.Command('thisfileshouldnotexist',
+                       program,
+                       '@"%s"' % program[0].abspath)
+
 
 def phony_target(env, **kw):
     for target, action in kw.items():
         env.AlwaysBuild(env.Alias(target, [], action))
 
+
 # -----------------------------------------------------------------------------
 def generate(env, **kw):
-    env.Append(ENV={'PATH' : os.environ['PATH']})
+    env.Append(ENV={'PATH': os.environ['PATH']})
 
     env.AddMethod(remove_from_list, 'RemoveFromList')
     env.AddMethod(filtered_glob, 'FilteredGlob')

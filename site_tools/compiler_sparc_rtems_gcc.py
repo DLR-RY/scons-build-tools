@@ -13,24 +13,26 @@
 
 from SCons.Script import *
 
+
 def generate(env, **kw):
-	env['PROGSUFFIX'] = ''
-	env['ARCHITECTURE'] = 'leon3'
-	env['OS'] = 'rtems'
-	
-	env.SetDefault(COMPILERPREFIX='sparc-rtems-')
+    env['PROGSUFFIX'] = ''
+    env['ARCHITECTURE'] = 'leon3'
+    env['OS'] = 'rtems'
+    
+    env.SetDefault(COMPILERPREFIX='sparc-rtems-')
 
-	# Without a '-q*' option, '-qleon3' is used (see Gaisler rcc-1.2.0
-	# documentation) although it is not recognized when added as an explicit
-	# parameter.
-	env.SetDefault(CCFLAGS_target=['-mcpu=v8', '-msoft-float', ])
-	env.SetDefault(CCFLAGS_optimize=['-O2', '-ffunction-sections', '-fdata-sections'])
+    # Without a '-q*' option, '-qleon3' is used (see Gaisler rcc-1.2.0
+    # documentation) although it is not recognized when added as an explicit
+    # parameter.
+    env.SetDefault(CCFLAGS_target=['-mcpu=v8', '-msoft-float', ])
+    env.SetDefault(CCFLAGS_optimize=['-O2', '-ffunction-sections', '-fdata-sections'])
 
-	env.SetDefault(CXXFLAGS_dialect=['-fno-rtti', '-fno-exceptions', ])
+    env.SetDefault(CXXFLAGS_dialect=['-fno-rtti', '-fno-exceptions', ])
 
-	env.SetDefault(LINKFLAGS_optimize=['--gc-sections', ])
+    env.SetDefault(LINKFLAGS_optimize=['--gc-sections', ])
 
-	env.Tool('settings_gcc_default_internal')
+    env.Tool('settings_gcc_default_internal')
+
 
 def exists(env):
-	return env.Detect('gcc')
+    return env.Detect('gcc')

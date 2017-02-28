@@ -13,11 +13,12 @@
 import re
 import commands
 
+
 def detect_gcc_version(env, gcc=None):
     """"Detect the version of the used GCC.
 
-    Used env['CXX'] as reference. A version string such as 4.4.3 is transformed into an
-    integer with two characters per level, here: 40403.
+    Used env['CXX'] as reference. A version string such as 4.4.3 is
+    transformed into an integer with two characters per level, here: 40403.
 
     Examples:
       4.9.2         -> 40902
@@ -41,8 +42,10 @@ def detect_gcc_version(env, gcc=None):
 
     return version
 
+
 def generate(env, **kw):
     env.AddMethod(detect_gcc_version, 'DetectGccVersion')
+
 
 def exists(env):
     return True

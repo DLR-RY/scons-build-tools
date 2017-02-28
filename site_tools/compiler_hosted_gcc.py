@@ -12,13 +12,14 @@
 
 from SCons.Script import *
 
+
 def generate(env, **kw):
-	env['PROGSUFFIX'] = ''
-	env['ARCHITECTURE'] = 'hosted'
-	env['OS'] = 'posix'
-	
-	env.Tool('settings_gcc_default_internal')
+    env['PROGSUFFIX'] = ''
+    env['ARCHITECTURE'] = 'hosted'
+    env['OS'] = 'posix'
+
+    env.Tool('settings_gcc_default_internal')
+
 
 def exists(env):
-	return env.Detect('gcc')
-	
+    return env.Detect('gcc')
