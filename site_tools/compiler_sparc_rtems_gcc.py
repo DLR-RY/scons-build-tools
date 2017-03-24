@@ -29,7 +29,7 @@ def generate(env, **kw):
 
     env.SetDefault(CXXFLAGS_dialect=['-fno-rtti', '-fno-exceptions', ])
 
-    env.SetDefault(LINKFLAGS_optimize=['--gc-sections', ])
+    #env.SetDefault(LINKFLAGS_optimize=['-Wl,--gc-sections', ])
 
     env.Tool('settings_gcc_default_internal')
 
