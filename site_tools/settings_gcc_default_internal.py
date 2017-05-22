@@ -126,7 +126,7 @@ def generate(env, **kw):
     ]
 
     env.SetDefault(CXXFLAGS_language=[
-        '-std=c++98',
+        '-std=c++11',
         '-pedantic',
     ])
 
