@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2014, 2016, German Aerospace Center (DLR)
+# Copyright (c) 2013-2014, 2016-2017, German Aerospace Center (DLR)
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Authors:
-# - 2013-2014, 2016, Fabian Greif (DLR RY-AVS)
+# - 2013-2014, 2016-2017, Fabian Greif (DLR RY-AVS)
 # - 2016, Jan-Gerd Mess (DLR RY-AVS)
-# - 2016, Olaf Maibaum (DLR SC-SRV)
 
 import sys
 import os
@@ -46,37 +45,37 @@ def generate(env, **kw):
 
     # build messages
     if ARGUMENTS.get('verbose') != '1':
-        env['CXX_PREPARE_COMSTR'] = \
-                                '%sPrepare C++:    %s$TARGET%s' % default
-        env['LOG_PREPROCESSOR_COMSTR'] = \
-                                '%sExtract Log:    %s$TARGET%s' % default
-        env['CCCOMSTR'] =       '%sCompiling C:    %s$TARGET%s' % default
-        env['CXXCOMSTR'] =      '%sCompiling C++:  %s$TARGET%s' % default
-        env['ASCOMSTR'] =       '%sAssembling:     %s$TARGET%s' % default
-        env['ASPPCOMSTR'] =     '%sAssembling:     %s$TARGET%s' % default
-        env['LINKCOMSTR'] =     '%sLinking:        %s$TARGET%s' % linking
-        env['RANLIBCOMSTR'] =   '%sIndexing:       %s$TARGET%s' % library
-        env['ARCOMSTR'] =       '%sCreate Library: %s$TARGET%s' % library
-
-        # for shared libraries
-        env['SHCCCOMSTR'] =     '%sCompiling C (shared):   %s$TARGET%s' % default
-        env['SHCXXCOMSTR'] =    '%sCompiling C++ (shared): %s$TARGET%s' % default
-        env['SHLINKCOMSTR'] =   '%sLinking (shared):       %s$TARGET%s' % linking
-
-        # Warning: Due to an inconsistency in SCons these ASCII-art arrow is
+        # Warning: Due to an inconsistency in SCons these ASCII-art arrow are
         #          necessary to keep the indentation. Spaces would be removed.
         #
         # See also:
         # http://scons.tigris.org/ds/viewMessage.do?dsForumId=1268&dsMessageId=2425232
+        env['CXX_PREPARE_COMSTR'] = \
+                                '%sPrepare C++···· %s$TARGET%s' % default
+        env['LOG_PREPROCESSOR_COMSTR'] = \
+                                '%sExtract Log···· %s$TARGET%s' % default
+        env['CCCOMSTR'] =       '%sCompiling C···· %s$TARGET%s' % default
+        env['CXXCOMSTR'] =      '%sCompiling C++·· %s$TARGET%s' % default
+        env['ASCOMSTR'] =       '%sAssembling····· %s$TARGET%s' % default
+        env['ASPPCOMSTR'] =     '%sAssembling····· %s$TARGET%s' % default
+        env['LINKCOMSTR'] =     '%sLinking········ %s$TARGET%s' % linking
+        env['RANLIBCOMSTR'] =   '%sIndexing······· %s$TARGET%s' % library
+        env['ARCOMSTR'] =       '%sCreate Library· %s$TARGET%s' % library
+
+        # for shared libraries
+        env['SHCCCOMSTR'] =     '%sCompiling C (shared)··· %s$TARGET%s' % default
+        env['SHCXXCOMSTR'] =    '%sCompiling C++ (shared)· %s$TARGET%s' % default
+        env['SHLINKCOMSTR'] =   '%sLinking (shared)······· %s$TARGET%s' % linking
+
         env['INSTALLSTR'] =     "%s.----Install--- %s$SOURCE\n" \
                                 "%s'-------------> %s$TARGET%s" % install
 
-        env['STRIPCOMSTR'] =    '%sStripping:      %s$TARGET%s' % linking
+        env['STRIPCOMSTR'] =    '%sStripping······ %s$TARGET%s' % linking
 
         env['SIZECOMSTR'] =     '%sSize after:%s%s'  % default
-        env['HEXCOMSTR'] =      '%sIntel-Hex File: %s$TARGET%s' % default
-        env['BINCOMSTR'] =      '%sBinary File:    %s$TARGET%s' % default
-        env['LSSCOMSTR'] =      '%sExt. Listing:   %s$TARGET%s' % default
+        env['HEXCOMSTR'] =      '%sIntel-Hex File· %s$TARGET%s' % default
+        env['BINCOMSTR'] =      '%sBinary File···· %s$TARGET%s' % default
+        env['LSSCOMSTR'] =      '%sExt. Listing··· %s$TARGET%s' % default
 
 
 def exists(env):

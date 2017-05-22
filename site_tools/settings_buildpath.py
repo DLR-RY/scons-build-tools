@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2014, 2016, German Aerospace Center (DLR)
+# Copyright (c) 2013-2014, 2016-2017, German Aerospace Center (DLR)
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # Authors:
-# - 2013-2014, 2016, Fabian Greif (DLR RY-AVS)
+# - 2013-2014, 2016-2017, Fabian Greif (DLR RY-AVS)
 
 import os
 
@@ -37,7 +37,7 @@ def relocate_to_buildpath(env, path, strip_extension=False):
 def generate(env, **kw):
     # These emitters are used to build everything not in place but in a
     # separate build-directory.
-    def defaultEmitter(target, source, env):
+    def default_emitter(target, source, env):
         targets = []
         for infile in target:
             # relocate the output to the buildpath
@@ -45,7 +45,7 @@ def generate(env, **kw):
             targets.append(env.File(filename))
         return targets, source
 
-    def sharedEmitter(target, source, env):
+    def shared_emitter(target, source, env):
         targets = []
         for infile in target:
             # relocate the output to the buildpath
@@ -57,20 +57,20 @@ def generate(env, **kw):
             targets.append(outfile)
         return targets, source
 
-    env['BUILDERS']['Object'].add_emitter('.cpp', defaultEmitter)
-    env['BUILDERS']['Object'].add_emitter('.cc', defaultEmitter)
-    env['BUILDERS']['Object'].add_emitter('.c', defaultEmitter)
-    env['BUILDERS']['Object'].add_emitter('.sx', defaultEmitter)
-    env['BUILDERS']['Object'].add_emitter('.S', defaultEmitter)
+    env['BUILDERS']['Object'].add_emitter('.cpp', default_emitter)
+    env['BUILDERS']['Object'].add_emitter('.cc', default_emitter)
+    env['BUILDERS']['Object'].add_emitter('.c', default_emitter)
+    env['BUILDERS']['Object'].add_emitter('.sx', default_emitter)
+    env['BUILDERS']['Object'].add_emitter('.S', default_emitter)
 
-    env['BUILDERS']['SharedObject'].add_emitter('.cpp', sharedEmitter)
-    env['BUILDERS']['SharedObject'].add_emitter('.cc', sharedEmitter)
-    env['BUILDERS']['SharedObject'].add_emitter('.c', sharedEmitter)
+    env['BUILDERS']['SharedObject'].add_emitter('.cpp', shared_emitter)
+    env['BUILDERS']['SharedObject'].add_emitter('.cc', shared_emitter)
+    env['BUILDERS']['SharedObject'].add_emitter('.c', shared_emitter)
 
-    env['LIBEMITTER'] = defaultEmitter
-    env['PROGEMITTER'] = defaultEmitter
+    env['LIBEMITTER'] = default_emitter
+    env['PROGEMITTER'] = default_emitter
 
-    env['BUILDPATH_EMITTER'] = defaultEmitter
+    env['BUILDPATH_EMITTER'] = default_emitter
 
     env.AddMethod(relocate_to_buildpath, 'Buildpath')
 
