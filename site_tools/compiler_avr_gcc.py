@@ -24,6 +24,14 @@ def generate(env, **kw):
         '-Os',
         '-ffunction-sections',
         '-fdata-sections',
+        '-finline-limit=10000',
+        '-funsigned-char',
+        '-funsigned-bitfields',
+        '-fno-split-wide-types',
+        '-fno-move-loop-invariants',
+        '-fno-tree-loop-optimize',
+        '-fno-unwind-tables',
+        '-fshort-wchar',        # Required when using newlib.nano
         ])
 
     env.SetDefault(CXXFLAGS_optimize=[
@@ -39,7 +47,7 @@ def generate(env, **kw):
         "-Wl,--gc-sections",
         ])
 
-    env.SetDefault(ASFLAGS=[
+    env.SetDefault(ASFLAGS_other=[
         "-xassembler-with-cpp",
         ])
 
