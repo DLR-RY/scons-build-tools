@@ -13,88 +13,101 @@
 import re
 import sys
 import subprocess
+import textwrap
 
 from SCons.Script import *
+from collections import defaultdict
 
-# Output of 'arm-none-eabi-size -A build/stm32_p103.elf':
-# build/stm32_p103.elf  :
-# section             size        addr
-# .reset               236   134217728
-# .fastcode             48   536870912
-# .text              18220   134218016
-# .rodata             4276   134236240
-# .data               1336   536870960
-# .bss                2688   536872296
-# .stack               640   536874984
-# .comment              42           0
-# .debug_aranges      3360           0
-# (...)
-# Total             285915
-#
-# Try to match the lines (name, size, address) to get the size of the
-# individual regions
-filter = re.compile('^(?P<section>[.]\w+)\s*(?P<size>\d+)\s*(?P<addr>\d+)$')
-
-# Sections which will remain in the Flash
-flash_section_names = ['.reset', '.fastcode', '.text', '.rodata', '.data']
-
-# Sections which will be created in RAM or are copied from the Flash. In that
-# case the section will appear also in `flash_section_names`.
-ram_section_names = ['.vectors', '.fastcode', '.data', '.bss', '.noinit']
+try:
+    from elftools.elf.elffile import ELFFile
+except:
+    print "elftools are missing, you need to `pip install pyelftools`!"
+    exit(1)
 
 
 def size_action(target, source, env):
-    cmd = [env['SIZE'], '-A', str(source[0])]
+    memories = defaultdict(list)
+    for memory in env["CONFIG_DEVICE_MEMORY"]:
+        if "w" in memory["access"]:
+            memories["ram"].append(memory)
+        else:
+            memories["rom"].append(memory)
 
-    # Run the default nm command (`arm-none-eabi-nm` in this case)
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-    stdout, stderr = p.communicate()
+    memory_sections = []
+    with open(source[0].path, "r") as src:
+        elffile = ELFFile(src)
+        for section in elffile.iter_sections():
+            s = {
+                "name": section.name,
+                "vaddr": section["sh_addr"],
+                "paddr": section["sh_addr"],
+                "size": section["sh_size"],
+            }
+            if s["vaddr"] == 0 or s["size"] == 0: continue;
+            for segment in elffile.iter_segments():
+                if (segment["p_vaddr"] == s["vaddr"] and segment["p_filesz"] == s["size"]):
+                    s["paddr"] = segment["p_paddr"]
+                    break
+            memory_sections.append(s)
 
-    if stderr is not None:
-        sys.stderr.write("Error while running %s" % ' '.join(cmd))
-        Exit(1)
+    sections = defaultdict(list)
+    totals = defaultdict(int)
+    for s in memory_sections:
+        if s["name"].startswith(".stack"):
+            totals["stack"] += s["size"]
+            sections["stack"].append(s["name"])
+        elif s["name"].startswith(".heap"):
+            totals["heap"] += s["size"]
+            sections["heap"].append(s["name"])
+        else:
+            def is_in_memory(name):
+                start = s[{"rom": "paddr", "ram": "vaddr"}[name]]
+                return any(((m["start"] <= start) and
+                            ((start + s["size"]) <= (m["start"] + m["size"])))
+                            for m in memories[name])
 
-    flash_size = 0
-    ram_size = 0
-    flash_sections = {}
-    ram_sections = {}
-    for line in stdout.splitlines():
-        match = filter.match(line)
-        if match:
-            section = match.group('section')
-            if section in flash_section_names:
-                flash_size += int(match.group('size'))
-                flash_sections[section] = 1
-            if section in ram_section_names:
-                ram_size += int(match.group('size'))
-                ram_sections[section] = 1
+            if is_in_memory("rom"):
+                totals["rom"] += s["size"]
+                sections["rom"].append(s["name"])
+            if is_in_memory("ram"):
+                totals["static"] += s["size"]
+                sections["static"].append(s["name"])
 
     # create lists of the used sections for Flash and RAM
-    flash_sections = flash_sections.keys()
-    flash_sections.sort()
-    ram_sections = ram_sections.keys()
-    ram_sections.sort()
+    sections["rom"] = sorted(sections["rom"])
+    sections["ram"] = sorted(list(set(sections["static"] + sections["stack"])))
+    sections["heap"] = sorted(sections["heap"])
 
-    flash_percentage = flash_size / float(env['DEVICE_SIZE']['flash']) * 100.0
-    ram_percentage = ram_size / float(env['DEVICE_SIZE']['ram']) * 100.0
+    flash = sum(m["size"] for m in memories["rom"])
+    ram = sum(m["size"] for m in memories["ram"])
 
-    device = env['DEVICE_SIZE']['name']
+    subs = {
+        "ram": totals["static"] + totals["stack"],
+        "rom_s": "\n ".join(textwrap.wrap(" + ".join(sections["rom"]), 80)),
+        "ram_s": "\n ".join(textwrap.wrap(" + ".join(sections["ram"]), 80)),
+        "heap_s": "\n ".join(textwrap.wrap(" + ".join(sections["heap"]), 80)),
+        "rom_p": totals["rom"] / float(flash) * 100.0,
+        "ram_p": (totals["static"] + totals["stack"]) / float(ram) * 100.0,
+        "static_p": totals["static"] / float(ram) * 100.0,
+        "stack_p": totals["stack"] / float(ram) * 100.0,
+        "heap_p": totals["heap"] / float(ram) * 100.0
+    }
+    subs.update(totals)
 
-    sys.stdout.write("""Memory Usage
-------------
-Device: %s
+    print """
+Program: {rom:7d}B ({rom_p:2.1f}% used)
+({rom_s})
 
-Program: %7d bytes (%2.1f%% Full)
-(%s)
+Data:    {ram:7d}B ({ram_p:2.1f}% used) = {static}B static ({static_p:2.1f}%) + {stack}B stack ({stack_p:2.1f}%)
+({ram_s})
 
-Data:    %7d bytes (%2.1f%% Full)
-(%s)
-""" % (device, flash_size, flash_percentage, ' + '.join(flash_sections),
-       ram_size, ram_percentage, ' + '.join(ram_sections)))
+Heap:  {heap:9d}B ({heap_p:2.1f}% available)
+({heap_s})
+""".format(**subs)
 
 
 def show_size(env, source, alias='__size'):
-    if env.has_key('DEVICE_SIZE'):
+    if env.has_key('CONFIG_DEVICE_MEMORY'):
         action = Action(size_action, cmdstr="$SIZECOMSTR")
     else:
         # use the raw output of the size tool
@@ -121,7 +134,6 @@ def phony_target(env, **kw):
 
 def generate(env, **kw):
     if ARGUMENTS.get('verbose') != '1':
-        env['SIZECOMSTR'] = "Size after:"
         env['SYMBOLSCOMSTR'] = "Show symbols for '$SOURCE':"
 
     env.AddMethod(show_size, 'Size')
