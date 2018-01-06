@@ -12,7 +12,7 @@
 # - 2016, Jan-Gerd Mess (DLR RY-AVS)
 
 from SCons.Script import *
-
+import sys
 
 def generate(env, **kw):
     env['PROGSUFFIX'] = ''
@@ -33,6 +33,14 @@ def generate(env, **kw):
     env['NM'] = prefix + 'nm'  # not available
     env['RANLIB'] = prefix + 'ranlib'  # not available
     env['SIZE'] = prefix + 'llvm-size'
+
+    # On macOS LLVM is the default compiler, and does not have llvm- prefixes
+    if sys.platform == "darwin":
+        env['LINKFLAGS_other']=[]
+        env['AS'] = prefix + 'as'
+        env['OBJDUMP'] = prefix + 'objdump'
+        env['AR'] = prefix + 'ar'
+        env['SIZE'] = prefix + 'size'
 
     # No LLVM equivalent available, use the GCC version if requested.
     env['STRIP'] = 'strip'
