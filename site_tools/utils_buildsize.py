@@ -21,7 +21,7 @@ from collections import defaultdict
 try:
     from elftools.elf.elffile import ELFFile
 except:
-    print "elftools are missing, you need to `pip install pyelftools`!"
+    print("elftools are missing, you need to `pip install pyelftools`!")
     exit(1)
 
 
@@ -34,7 +34,7 @@ def size_action(target, source, env):
             memories["rom"].append(memory)
 
     memory_sections = []
-    with open(source[0].path, "r") as src:
+    with open(source[0].path, "rb") as src:
         elffile = ELFFile(src)
         for section in elffile.iter_sections():
             s = {
@@ -94,7 +94,7 @@ def size_action(target, source, env):
     }
     subs.update(totals)
 
-    print """
+    print("""
 Program: {rom:7d}B ({rom_p:2.1f}% used)
 ({rom_s})
 
@@ -103,7 +103,7 @@ Data:    {ram:7d}B ({ram_p:2.1f}% used) = {static}B static ({static_p:2.1f}%) + 
 
 Heap:  {heap:9d}B ({heap_p:2.1f}% available)
 ({heap_s})
-""".format(**subs)
+""".format(**subs))
 
 
 def show_size(env, source, alias='__size'):

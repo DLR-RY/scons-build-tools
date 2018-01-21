@@ -35,7 +35,7 @@ def generate(env, **kw):
 
     # If the output is not a terminal, remove the colors
     if not sys.stdout.isatty():
-        for key, value in colors.iteritems():
+        for key, value in colors.items():
             colors[key] = ''
 
     default = (colors['green'], colors['yellow'], colors['end'])

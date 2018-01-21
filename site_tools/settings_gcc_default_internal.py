@@ -11,7 +11,6 @@
 # - 2016-2017, Fabian Greif (DLR RY-AVS)
 
 import os
-import commands
 
 from SCons.Script import *
 

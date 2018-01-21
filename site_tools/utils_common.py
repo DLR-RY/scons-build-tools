@@ -12,7 +12,6 @@
 
 import os
 import os.path
-import commands
 
 from SCons.Script import *
 
