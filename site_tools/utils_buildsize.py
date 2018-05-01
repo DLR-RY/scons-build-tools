@@ -10,9 +10,17 @@
 # Authors:
 # - 2013, 2016, Fabian Greif (DLR RY-AVS)
 
-import re
-import sys
-import subprocess
+# USAGE:
+#
+# Reads and matches ELF sections and segments to the physical memories
+# passed in CONFIG_DEVICE_MEMORY which needs to be a list of dictionaries:
+#
+#     env["CONFIG_DEVICE_MEMORY"] = [
+#         {"name": "flash", "start": 0x08000000, "size": 2097152, "access": "rx"},
+#         {"name": "ccm", "start": 0x10000000, "size": 65536, "access": "rw"},
+#         {"name": "sram1", "start": 0x20000000, "size": 163840, "access": "rwx"}
+#     ]
+
 import textwrap
 
 from SCons.Script import *
@@ -23,6 +31,18 @@ try:
 except:
     print("elftools are missing, you need to `pip install pyelftools`!")
     exit(1)
+
+
+def human_readable_format(num, unit='B'):
+    for prefix in ['', 'Ki', 'Mi', 'Gi', 'Ti']:
+        if abs(num) < 1024.0:
+            if prefix == '':
+                # Align the output independent of whether a prefix is used
+                return "%3.1f %s  " % (num, unit)
+            else:
+                return "%3.1f %s%s" % (num, prefix, unit)
+        num /= 1024.0
+    return "%.1f %s%s" % (num, 'Pi', unit)
 
 
 def size_action(target, source, env):
@@ -60,6 +80,7 @@ def size_action(target, source, env):
             totals["heap"] += s["size"]
             sections["heap"].append(s["name"])
         else:
+
             def is_in_memory(name):
                 start = s[{"rom": "paddr", "ram": "vaddr"}[name]]
                 return any(((m["start"] <= start) and
@@ -95,15 +116,18 @@ def size_action(target, source, env):
     subs.update(totals)
 
     print("""
-Program: {rom:7d}B ({rom_p:2.1f}% used)
+Program: {rom_fmt:>9s} ({rom_p:2.1f}% used)
 ({rom_s})
 
-Data:    {ram:7d}B ({ram_p:2.1f}% used) = {static}B static ({static_p:2.1f}%) + {stack}B stack ({stack_p:2.1f}%)
+Data:    {ram_fmt:>9s} ({ram_p:2.1f}% used) = {static} B static ({static_p:2.1f}%) + {stack} B stack ({stack_p:2.1f}%)
 ({ram_s})
 
-Heap:  {heap:9d}B ({heap_p:2.1f}% available)
+Heap:  {heap_fmt:>11s} ({heap_p:2.1f}% available)
 ({heap_s})
-""".format(**subs))
+""".format(ram_fmt=human_readable_format(subs["ram"]),
+           rom_fmt=human_readable_format(subs["rom"]),
+           heap_fmt=human_readable_format(subs["heap"]),
+           **subs))
 
 
 def show_size(env, source, alias='__size'):
