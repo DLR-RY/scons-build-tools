@@ -1,0 +1,31 @@
+---
+basepath: "."
+ignore_patterns:
+    - "README.md"
+    - "LICENSE"
+    - "VERSION"
+filetype_mapping: {}
+
+copyright:
+    "Fabian Greif <Fabian.Greif@dlr.de>": "German Aerospace Center (DLR)"
+    "Jan-Gerd Mess <Jan-Gerd.Mess@dlr.de>": "German Aerospace Center (DLR)"
+    "Rhea Rinaldo <Rhea.Rinaldo@dlr.de>": "German Aerospace Center (DLR)"
+    "Jan Sommer <Jan.Sommer@dlr.de>": "German Aerospace Center (DLR)"
+    "Fabian Greif <fabian.greif@rwth-aachen.de>": "Fabian Greif"
+    "Niklas Hauser <niklas.hauser@rwth-aachen.de>": "Niklas Hauser"
+
+author:
+    "Fabian Greif <Fabian.Greif@dlr.de>": "Fabian Greif (DLR RY-AVS)"
+    "Jan-Gerd Mess <Jan-Gerd.Mess@dlr.de>": "Jan-Gerd Mess (DLR RY-AVS)"
+    "Rhea Rinaldo <Rhea.Rinaldo@dlr.de>": "Rhea Rinaldo (DLR RY-AVS)"
+    "Jan Sommer <Jan.Sommer@dlr.de>": "Jan Sommer (DLR SC-SRV)"
+
+header: |
+    {copyright}
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+    Authors:
+    {authors}
