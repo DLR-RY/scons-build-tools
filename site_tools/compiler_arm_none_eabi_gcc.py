@@ -27,7 +27,7 @@ def generate(env, **kw):
         '-mthumb-interwork'])
     env.SetDefault(CCFLAGS_debug=['-gdwarf-2'])
     env.SetDefault(CCFLAGS_optimize=[
-        '-O2',
+        '-Os',
         '-ffunction-sections',
         '-fdata-sections', ])
     env.SetDefault(CCFLAGS_other=[
@@ -49,7 +49,7 @@ def generate(env, **kw):
         '-fno-threadsafe-statics',
         '-fuse-cxa-atexit',])
     env.SetDefault(CXXFLAGS_language=[
-        '-std=c++11',
+        '-std=c++14',
         '-fno-exceptions',
         '-fno-rtti',])
 

@@ -12,6 +12,7 @@
 
 from SCons.Script import *
 
+
 def generate(env, **kw):
     env['PROGSUFFIX'] = '.elf'
     env['ARCHITECTURE'] = 'avr'
@@ -35,11 +36,12 @@ def generate(env, **kw):
         ])
 
     env.SetDefault(CXXFLAGS_optimize=[
-        "-fno-exceptions",
-        "-fno-rtti",
-        "-fno-threadsafe-statics",
-        "-fuse-cxa-atexit",
-        ])
+        '-fno-threadsafe-statics',
+        '-fuse-cxa-atexit', ])
+    env.SetDefault(CXXFLAGS_language=[
+        '-std=c++14',
+        '-fno-exceptions',
+        '-fno-rtti', ])
 
     env.SetDefault(LINKFLAGS_target=[])
     env.SetDefault(LINKFLAGS_optimize=[
@@ -52,6 +54,7 @@ def generate(env, **kw):
         ])
 
     env.Tool('settings_gcc_default_internal')
+
 
 def exists(env):
     return env.Detect('gcc')
