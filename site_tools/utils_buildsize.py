@@ -38,7 +38,7 @@ def size_action(target, source, env):
         elffile = ELFFile(src)
         for section in elffile.iter_sections():
             s = {
-                "name": section.name,
+                "name": section.name.decode('ASCII'),
                 "vaddr": section["sh_addr"],
                 "paddr": section["sh_addr"],
                 "size": section["sh_size"],
