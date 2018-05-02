@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2014, 2016-2017, German Aerospace Center (DLR)
+# Copyright (c) 2018, Niklas Hauser
+# Copyright (c) 2018, Fabian Greif
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +11,8 @@
 #
 # Authors:
 # - 2013-2014, 2016-2017, Fabian Greif (DLR RY-AVS)
-# - 2016, Jan-Gerd Mess (DLR RY-AVS)
+# - 2018, Niklas Hauser
+# - 2018, Fabian Greif
 
 import sys
 import os

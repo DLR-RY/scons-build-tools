@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2014-2017, German Aerospace Center (DLR)
+# Copyright (c) 2018, Fabian Greif
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +10,7 @@
 #
 # Authors:
 # - 2014-2017, Fabian Greif (DLR RY-AVS)
+# - 2018, Fabian Greif
 
 from SCons.Script import *
 

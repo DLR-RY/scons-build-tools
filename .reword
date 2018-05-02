@@ -1,15 +1,18 @@
 ---
 basepath: "."
 ignore_patterns:
-    - "README.md"
-    - "LICENSE"
-    - "VERSION"
+    - "*README.md"
+    - "*LICENSE"
+    - "*VERSION"
 filetype_mapping: {}
+
+ignore_commits: []
 
 copyright:
     "Fabian Greif <Fabian.Greif@dlr.de>": "German Aerospace Center (DLR)"
     "Jan-Gerd Mess <Jan-Gerd.Mess@dlr.de>": "German Aerospace Center (DLR)"
     "Rhea Rinaldo <Rhea.Rinaldo@dlr.de>": "German Aerospace Center (DLR)"
+    "Muhammad Bassam <muhammad.bassam@dlr.de>": "German Aerospace Center (DLR)"
     "Jan Sommer <Jan.Sommer@dlr.de>": "German Aerospace Center (DLR)"
     "Fabian Greif <fabian.greif@rwth-aachen.de>": "Fabian Greif"
     "Niklas Hauser <niklas.hauser@rwth-aachen.de>": "Niklas Hauser"
@@ -18,6 +21,7 @@ author:
     "Fabian Greif <Fabian.Greif@dlr.de>": "Fabian Greif (DLR RY-AVS)"
     "Jan-Gerd Mess <Jan-Gerd.Mess@dlr.de>": "Jan-Gerd Mess (DLR RY-AVS)"
     "Rhea Rinaldo <Rhea.Rinaldo@dlr.de>": "Rhea Rinaldo (DLR RY-AVS)"
+    "Muhammad Bassam <muhammad.bassam@dlr.de>": "Muhammad Bassam (DLR RY-AVS)"
     "Jan Sommer <Jan.Sommer@dlr.de>": "Jan Sommer (DLR SC-SRV)"
 
 header: |
